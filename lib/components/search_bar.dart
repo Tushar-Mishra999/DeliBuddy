@@ -1,0 +1,45 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class RoundedSearchBar extends StatelessWidget {
+  final String hintText;
+  final ValueChanged<String> onSubmitted;
+
+  const RoundedSearchBar({
+    Key? key,
+    required this.hintText,
+    required this.onSubmitted,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    return Container(
+      width: size.width * 0.9,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(30),
+        color: Colors.grey.shade200,
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        children: [
+          Icon(Icons.search, color: Colors.grey.shade600),
+          const SizedBox(width: 15),
+          Expanded(
+            child: TextField(
+              style: GoogleFonts.sourceSansPro(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15),
+              onSubmitted: onSubmitted,
+              decoration: InputDecoration(
+                  hintText: hintText,
+                  border: InputBorder.none,
+                  hintStyle: TextStyle(color: Colors.grey.shade600)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

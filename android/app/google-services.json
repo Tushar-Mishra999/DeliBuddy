@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "834528390191",
+    "project_id": "delibuddy-84ea8",
+    "storage_bucket": "delibuddy-84ea8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:834528390191:android:58a0fb5e16a9be6c182ada",
+        "android_client_info": {
+          "package_name": "com.example.delibuddy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "834528390191-82fl1eqg2u2g2e2svff6pd29g19otpc5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpDAVJFg8ybS7J4TiU6z4uQMS_FyrMvH0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "834528390191-82fl1eqg2u2g2e2svff6pd29g19otpc5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
