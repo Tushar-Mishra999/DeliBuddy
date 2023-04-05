@@ -7,7 +7,7 @@ import 'package:delibuddy/constants.dart';
 import 'package:delibuddy/views/email_verification.dart';
 import 'package:http/http.dart' as http;
 
-import '../views/home_screen.dart';
+import '../views/home/home_screen.dart';
 
 
 class AuthService {

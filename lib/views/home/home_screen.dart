@@ -1,5 +1,5 @@
 import 'package:delibuddy/components/search_bar.dart';
-import 'package:delibuddy/components/shop.dart';
+import 'package:delibuddy/views/home/shop.dart';
 import 'package:delibuddy/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -15,21 +15,11 @@ class HomeScreen extends StatelessWidget {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+        backgroundColor: bgcolor,
         body: SafeArea(
-      child: Center(
-          child: Column(
-        children: [
-          SizedBox(
-            height: size.height * 0.1,
-          ),
-          RoundedSearchBar(
-            hintText: "Search what you need",
-            onSubmitted: (value) {},
-          ),
-          SizedBox(
-            height: size.height * 0.06,
-          ),
-          Column(
+          child: Center(
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Shop(size: size),
               Shop(size: size),
@@ -37,9 +27,7 @@ class HomeScreen extends StatelessWidget {
               Shop(size: size),
               Shop(size: size),
             ],
-          )
-        ],
-      )),
-    ));
+          )),
+        ));
   }
 }

@@ -1,5 +1,5 @@
 import 'package:delibuddy/views/email_verification.dart';
-import 'package:delibuddy/views/home_screen.dart';
+import 'package:delibuddy/views/home/home_screen.dart';
 import 'package:delibuddy/views/login_screen.dart';
 import 'package:delibuddy/views/registration_screen.dart';
 import 'package:flutter/material.dart';
