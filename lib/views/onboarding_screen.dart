@@ -13,62 +13,61 @@ class OnboardingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: kBgColor,
+      backgroundColor: bgcolor,
       body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Center(
               child: Image.asset(
-                'assets/carrybag.png',
-                width: size.width * 0.7,
+                'assets/logo.png',
+                height: size.height * 0.5,
               ),
-              // child: SvgPicture.asset(
-              //   "assets/gradhatns.svg",
-              //   width: size.width * 0.6,
-              // ),
             ),
-            SizedBox(
-              height: size.height * 0.04,
-            ),
-            Center(
-                child: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: "Deli",
-                    style: GoogleFonts.sourceSansPro(
-                      color: color1,
-                      fontSize: 50,
-                      fontWeight: FontWeight.w100,
-                    ),
-                  ),
-                  TextSpan(
-                    text: "Buddy",
-                    style: GoogleFonts.sourceSansPro(
-                      color: color1,
-                      fontSize: 50,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
-              ),
-            )),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Text(
-                'Get your food and other needs delivered quickly and conveniently with our buddy delivery service',
+            Container(
+              width: size.width * 0.8,
+              child: RichText(
                 textAlign: TextAlign.center,
-                maxLines: 2,
-                style: GoogleFonts.sourceSansPro(
-                  color: Colors.grey.shade700,
-                  fontSize: 15,
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: "Delivery",
+                      style: GoogleFonts.inter(
+                        color: color1,
+                        fontSize: 25,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    TextSpan(
+                      text: " at your doorstep, made easy.",
+                      style: GoogleFonts.inter(
+                        color: color2,
+                        fontSize: 25,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
             SizedBox(
-              height: size.height * 0.02,
+              height: size.height * 0.05,
+            ),
+            Container(
+              height: size.height * 0.1,
+              width: size.width * 0.8,
+              child: Text(
+                "Now get anything delivered to you at your hostel’s in just a few clicks from our affiliated stores and vendors",
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: size.height * 0.01,
             ),
             RoundedButton(
               title: "Login",
