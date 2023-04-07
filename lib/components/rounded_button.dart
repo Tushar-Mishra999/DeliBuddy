@@ -21,11 +21,11 @@ class RoundedButton extends StatelessWidget {
     return GestureDetector(
       onTap: func,
       child: Container(
-          width: size.width * 0.8,
+          width: size.width * 0.82,
           height: size.height * 0.07,
           decoration: BoxDecoration(
               color: second ? color2 : color1,
-              borderRadius: const BorderRadius.all(Radius.circular(20))),
+              borderRadius: const BorderRadius.all(Radius.circular(10))),
           child: Center(
             child: Text(
               title,
