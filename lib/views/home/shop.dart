@@ -7,9 +7,11 @@ class Shop extends StatelessWidget {
   const Shop({
     Key? key,
     required this.size,
+    required this.name,
   }) : super(key: key);
 
   final Size size;
+  final String name;
 
   @override
   Widget build(BuildContext context) {
@@ -26,14 +28,16 @@ class Shop extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Text(
-              "Mahesh Restro Bar",
+              name,
               style: GoogleFonts.sourceSansPro(
                   fontSize: 20, color: bgcolor, fontWeight: FontWeight.w500),
             ),
             Text(
               'OPEN',
               style: GoogleFonts.sourceSansPro(
-                  fontSize: 20, color: Colors.green, fontWeight: FontWeight.w500),
+                  fontSize: 20,
+                  color: Colors.green,
+                  fontWeight: FontWeight.w500),
             ),
           ],
         ),

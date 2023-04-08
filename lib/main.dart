@@ -3,7 +3,7 @@ import 'package:delibuddy/views/home/home_screen.dart';
 import 'package:delibuddy/views/onboarding_screen.dart';
 import 'package:delibuddy/views/order_description.dart';
 import 'package:delibuddy/views/order_detail.dart';
-import 'package:delibuddy/views/order_request.dart';
+import 'package:delibuddy/views/order_request/order_request.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: OrderRequest(),
+      home: HomeScreen(),
     );
   }
 }
