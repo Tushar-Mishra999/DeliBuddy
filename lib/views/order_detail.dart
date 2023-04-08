@@ -1,3 +1,4 @@
+import 'package:delibuddy/components/rounded_button.dart';
 import 'package:delibuddy/constants.dart';
 import 'package:flutter/material.dart' hide BoxDecoration, BoxShadow;
 import 'package:flutter_inset_box_shadow/flutter_inset_box_shadow.dart';
@@ -36,6 +37,27 @@ class OrderDetail extends StatelessWidget {
               ),
               SizedBox(
                 height: size.height * 0.06,
+              ),
+              Row(
+                children: [
+                  Text(
+                    'OTP: ',
+                    style: GoogleFonts.sourceSansPro(
+                        fontSize: 25,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w700),
+                  ),
+                  Text(
+                    '4569',
+                    style: GoogleFonts.sourceSansPro(
+                        fontSize: 25,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: size.height * 0.02,
               ),
               Text(
                 'Order Detail',
@@ -79,52 +101,10 @@ class OrderDetail extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                height: size.height * 0.04,
+                height: size.height * 0.02,
               ),
-              Row(
-                children: [
-                  Text(
-                    'OTP: ',
-                    style: GoogleFonts.sourceSansPro(
-                        fontSize: 25,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w700),
-                  ),
-                  Text(
-                    '4569',
-                    style: GoogleFonts.sourceSansPro(
-                        fontSize: 25,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: size.height * 0.04,
-              ),
-              Row(
-                children: [
-                  Text(
-                    'UPI ID: ',
-                    style: GoogleFonts.sourceSansPro(
-                        fontSize: 25,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w700),
-                  ),
-                  Text(
-                    '9958904763@sidplex',
-                    style: GoogleFonts.sourceSansPro(
-                        fontSize: 25,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: size.height * 0.04,
-              ),
-              Center(
-                child: Container(
+              Column(children: [
+                Container(
                   width: size.width * 0.8,
                   height: size.height * 0.4,
                   child: Image.asset(
@@ -132,6 +112,28 @@ class OrderDetail extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'UPI ID: 9958904763@sidplex ',
+                      style: GoogleFonts.sourceSansPro(
+                          fontSize: 18,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
+              ]),
+              SizedBox(
+                height: size.height * 0.02,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  RoundedButton(
+                      title: "Pay", size: size, func: () {}, second: false),
+                ],
               )
             ],
           ),
