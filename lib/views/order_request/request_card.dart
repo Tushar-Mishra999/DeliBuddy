@@ -7,14 +7,14 @@ class RequestCard extends StatelessWidget {
       {Key? key,
       required this.size,
       required this.name,
-      required this.price,
+      required this.shop,
       required this.description,
       required this.email})
       : super(key: key);
 
   final Size size;
   final String name;
-  final String price;
+  final String shop;
   final String description;
   final String email;
 
@@ -37,13 +37,20 @@ class RequestCard extends StatelessWidget {
                 style: GoogleFonts.sourceSansPro(
                     color: bgcolor, fontSize: 24, fontWeight: FontWeight.w500),
               ),
-              Text(
-                "\u20B9$price",
+               Text(
+                shop,
                 style: GoogleFonts.sourceSansPro(
                     color: Colors.white,
                     fontSize: 24,
                     fontWeight: FontWeight.w500),
               ),
+              // Text(
+              //   "\u20B9$price",
+              //   style: GoogleFonts.sourceSansPro(
+              //       color: Colors.white,
+              //       fontSize: 24,
+              //       fontWeight: FontWeight.w500),
+              // ),
             ],
           ),
         ),

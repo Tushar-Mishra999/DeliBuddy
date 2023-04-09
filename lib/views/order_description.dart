@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delibuddy/components/rounded_button.dart';
 import 'package:delibuddy/constants.dart';
@@ -6,10 +8,46 @@ import 'package:flutter/material.dart' hide BoxDecoration, BoxShadow;
 import 'package:flutter_inset_box_shadow/flutter_inset_box_shadow.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class OrderDescription extends StatelessWidget {
-  OrderDescription({super.key});
+class OrderDescription extends StatefulWidget {
+  static const routeName = '/order-description';
+  OrderDescription({super.key, required this.shopName});
+  String shopName;
+
+  @override
+  State<OrderDescription> createState() => _OrderDescriptionState();
+}
+
+class _OrderDescriptionState extends State<OrderDescription> {
   TextEditingController textController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    Timer.periodic(Duration(seconds: 10), (timer) {
+      statusChecking();
+    });
+  }
+
+  void statusChecking() async {
+    final DocumentSnapshot<Map<String, dynamic>> orderDoc =
+        await FirebaseFirestore.instance
+            .collection('orders')
+            .doc('orders')
+            .get();
+
+    List<dynamic> orders = orderDoc.data()!['orders'];
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? email = prefs.getString('email');
+    Map<String, dynamic> orderMap = orders
+        .firstWhere((order) => order['email'] == email, orElse: () => null);
+
+    String status = orderMap['status'];
+
+    Fluttertoast.showToast(msg: status);
+  }
+
   void addOrder() async {
     try {
       // Get a reference to the 'orders' collection
@@ -21,15 +59,18 @@ class OrderDescription extends StatelessWidget {
           FirebaseFirestore.instance.collection('orders').doc('orders');
 
       final currentOrders = (documentSnapshot.data()!['orders']);
-      print("adadas $currentOrders");
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? name = prefs.getString('name');
+      String? email = prefs.getString('email');
       final order = {
-        'name': 'Harcoded name',
-        'email': FirebaseAuth.instance.currentUser!.email,
+        'name': name,
+        'email': email,
         'description': textController.text,
-        'price': '10',
+        'shop': widget.shopName,
+        'status': 'pending',
         'timestamp': Timestamp.now()
       };
-      print("NEw order $order");
+
       currentOrders.add(order);
 
       await documentRef.update({'orders': currentOrders});
@@ -70,7 +111,7 @@ class OrderDescription extends StatelessWidget {
                     width: size.width * 0.05,
                   ),
                   Text(
-                    'Surya Truck Shop',
+                    widget.shopName,
                     style: GoogleFonts.sourceSansPro(
                         fontSize: 25,
                         color: Colors.black,
@@ -94,26 +135,26 @@ class OrderDescription extends StatelessWidget {
                     BoxShadow(
                       color: Colors.black.withOpacity(0.3),
                       blurRadius: 15,
-                      offset: Offset(0, 0),
+                      offset: const Offset(0, 0),
                       inset: true,
                     ),
                     BoxShadow(
                       color: Colors.black.withOpacity(0.7),
                       blurRadius: 15,
-                      offset: Offset(7, 7),
+                      offset: const Offset(7, 7),
                       inset: true,
                     ),
                   ],
                 ),
                 child: Padding(
-                  padding: EdgeInsets.all(20.0),
+                  padding: const EdgeInsets.all(20.0),
                   child: TextField(
                     controller: textController,
                     style: GoogleFonts.sourceSansPro(
                         fontSize: 20,
                         color: Colors.black,
                         fontWeight: FontWeight.w800),
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: "Please type your order",
                     ),

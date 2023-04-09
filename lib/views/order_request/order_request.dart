@@ -83,7 +83,7 @@ class _OrderRequestState extends State<OrderRequest> {
                   size: size,
                   name: details['name'],
                   description: details['description'],
-                  price: details['price'],
+                  shop: details['shop'],
                   email: details['email'],
                 );
               },

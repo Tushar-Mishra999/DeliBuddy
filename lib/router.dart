@@ -2,6 +2,7 @@ import 'package:delibuddy/views/auth/email_verification.dart';
 import 'package:delibuddy/views/home/home_screen.dart';
 import 'package:delibuddy/views/auth/login_screen.dart';
 import 'package:delibuddy/views/auth/registration_screen.dart';
+import 'package:delibuddy/views/order_description.dart';
 import 'package:flutter/material.dart';
 
 
@@ -26,6 +27,13 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
       return MaterialPageRoute(
         settings: routeSettings,
         builder: (_) => EmailVerification(),
+      );
+     case OrderDescription.routeName:
+     Map<String, dynamic> arguments =
+          routeSettings.arguments as Map<String, dynamic>;
+      return MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) => OrderDescription(shopName: arguments['shopName'],),
       );
     default:
       return MaterialPageRoute(
