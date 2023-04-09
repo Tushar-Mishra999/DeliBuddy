@@ -43,20 +43,42 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
         backgroundColor: bgcolor,
         body: SafeArea(
-          child: Center(
-              child: Container(
-            width: size.width * 0.9,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: stores.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Shop(
-                  size: size,
-                  name: stores[index],
-                );
-              },
+          child: Column(children: [
+            SizedBox(
+              height: size.height * 0.06,
             ),
-          )),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: size.width * 0.05,
+                ),
+                Text(
+                  'Search what you need',
+                  style: GoogleFonts.sourceSansPro(
+                      fontSize: 25,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w700),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: size.height * 0.03,
+            ),
+            Container(
+              width: size.width * 0.9,
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: stores.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Shop(
+                    size: size,
+                    name: stores[index],
+                  );
+                },
+              ),
+            )
+          ]),
         ));
   }
 }

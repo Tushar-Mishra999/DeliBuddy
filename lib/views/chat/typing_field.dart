@@ -12,17 +12,18 @@ class TypingField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 10),
+      margin: EdgeInsets.only(bottom: 20),
       width: size.width * 0.9,
+      height: size.height * 0.06,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color1),
-        color: bgcolor,
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.white,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: [
-          Expanded(
+          Container(
+            width: size.width * 0.75,
             child: TextField(
               style: TextStyle(
                 color: Colors.grey.shade800,
@@ -37,6 +38,10 @@ class TypingField extends StatelessWidget {
                   hintStyle: const TextStyle(
                       color: Color.fromARGB(255, 176, 176, 176))),
             ),
+          ),
+          Icon(
+            Icons.attach_file,
+            color: color1,
           ),
         ],
       ),

@@ -8,20 +8,21 @@ class RequestCard extends StatelessWidget {
       required this.size,
       required this.name,
       required this.price,
-      required this.description})
+      required this.description,
+      required this.email})
       : super(key: key);
 
   final Size size;
   final String name;
   final String price;
   final String description;
+  final String email;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.5),
-          borderRadius: BorderRadius.circular(10)),
+      decoration:
+          BoxDecoration(color: color2, borderRadius: BorderRadius.circular(10)),
       margin: const EdgeInsets.all(10),
       height: size.height * 0.2,
       width: size.width * 0.8,
@@ -34,26 +35,33 @@ class RequestCard extends StatelessWidget {
               Text(
                 name,
                 style: GoogleFonts.sourceSansPro(
-                    color: Colors.black,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w500),
+                    color: bgcolor, fontSize: 24, fontWeight: FontWeight.w500),
               ),
               Text(
                 "\u20B9$price",
                 style: GoogleFonts.sourceSansPro(
-                    color: color1, fontSize: 24, fontWeight: FontWeight.w500),
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w500),
               ),
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Text(
-            description,
-            textAlign: TextAlign.left,
-            style: GoogleFonts.sourceSansPro(
-                color: Colors.black, fontSize: 15, fontWeight: FontWeight.w500),
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Text(
+                description,
+                textAlign: TextAlign.left,
+                style: GoogleFonts.sourceSansPro(
+                    color: Colors.white,
+                    fontSize: 17,
+                    fontWeight: FontWeight.w500),
+              ),
+            ),
+          ],
         ),
         const Spacer(),
         Row(
@@ -63,14 +71,15 @@ class RequestCard extends StatelessWidget {
               margin: EdgeInsets.only(bottom: 5),
               decoration: BoxDecoration(
                   border: Border.all(color: color1, width: 3),
-                  color: Colors.white.withOpacity(0.9),
+                  color: color1,
                   borderRadius: BorderRadius.circular(10)),
               height: size.height * 0.06,
               width: size.width * 0.38,
               child: Center(
                 child: Text(
-                  'Accept',
-                  style: GoogleFonts.sourceSansPro(color: color1, fontSize: 20),
+                  'ACCEPT',
+                  style: GoogleFonts.sourceSansPro(
+                      color: Colors.white, fontSize: 20),
                 ),
               ),
             ),
@@ -82,9 +91,9 @@ class RequestCard extends StatelessWidget {
               width: size.width * 0.38,
               child: Center(
                 child: Text(
-                  'Decline',
+                  'DENY',
                   style: GoogleFonts.sourceSansPro(
-                      color: Colors.black, fontSize: 20),
+                      color: Colors.white, fontSize: 20),
                 ),
               ),
             )

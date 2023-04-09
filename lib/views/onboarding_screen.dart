@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:delibuddy/constants.dart';
-import 'package:delibuddy/views/login_screen.dart';
-import 'package:delibuddy/views/registration_screen.dart';
+import 'package:delibuddy/views/auth/login_screen.dart';
+import 'package:delibuddy/views/auth/registration_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../components/rounded_button.dart';

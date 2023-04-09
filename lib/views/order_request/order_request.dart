@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delibuddy/constants.dart';
 import 'package:delibuddy/views/order_request/request_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class OrderRequest extends StatefulWidget {
@@ -15,7 +18,7 @@ class OrderRequest extends StatefulWidget {
 
 class _OrderRequestState extends State<OrderRequest> {
   TextEditingController messageController = new TextEditingController();
-  Stream<DocumentSnapshot>? chatStream;
+  Stream<DocumentSnapshot>? orderStream;
 
   @override
   void initState() {
@@ -33,33 +36,55 @@ class _OrderRequestState extends State<OrderRequest> {
       }
     });
 
-    chatStream = FirebaseFirestore.instance
+    orderStream = FirebaseFirestore.instance
         .collection('orders')
         .doc('orders')
         .snapshots();
+    Timer.periodic(Duration(minutes: 1), (timer) {
+      //  deleteOldOrders();
+    });
   }
 
-  Widget ChatMessageList() {
+  // Future<void> deleteOldOrders() async {
+  //   final currentTime = DateTime.now().millisecondsSinceEpoch;
+  //   final ordersRef =
+  //       FirebaseFirestore.instance.collection('orders').doc('orders');
+  //   final docSnapshot = await ordersRef.get();
+  //   if (docSnapshot.exists) {
+  //     final orders =
+  //         List<Map<String, dynamic>>.from(docSnapshot.data()!['orders']);
+  //     final updatedOrders = <Map<String, dynamic>>[];
+  //     orders.forEach((order) {
+  //       final orderTime = order['timestamp'].millisecondsSinceEpoch;
+  //       if (currentTime - orderTime < 60000) {
+  //         updatedOrders.add(order);
+  //       }
+  //     });
+  //     await ordersRef.update({'orders': updatedOrders});
+  //   }
+  // }
+
+  Widget OrderList() {
     //final user = Provider.of<UserProvider>(context, listen: false).user;
-    //print(user.type);
     final size = MediaQuery.of(context).size;
     return StreamBuilder(
-      stream: chatStream,
+      stream: orderStream,
       builder: (context, snapshot) {
         if (snapshot.data != null) {
           List<dynamic> orderList = snapshot.data!['orders'];
-          // orderList = List.from(orderList.reversed);
-          return Expanded(
+          return Container(
+            width: size.width * 0.9,
             child: ListView.builder(
               shrinkWrap: true,
               itemCount: orderList.length,
               itemBuilder: (context, index) {
-                Map<String, dynamic> details = orderList[0];
+                Map<String, dynamic> details = orderList[index];
                 return RequestCard(
                   size: size,
-                  name: details['clientName'],
-                  description: details['message'],
-                  price: details['price'].toString(),
+                  name: details['name'],
+                  description: details['description'],
+                  price: details['price'],
+                  email: details['email'],
                 );
               },
             ),
@@ -76,27 +101,34 @@ class _OrderRequestState extends State<OrderRequest> {
     final size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: bgcolor,
-      body: Container(
-        width: size.width * 1,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/logo.png'),
-            fit: BoxFit.contain,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: size.height * 0.1,
           ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            ChatMessageList()
-            // RequestCard(size: size),
-            // RequestCard(size: size),
-            // RequestCard(size: size),
-            // RequestCard(size: size),
-          ],
-        ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: size.width * 0.09,
+              ),
+              Text(
+                'Orders',
+                style: GoogleFonts.sourceSansPro(
+                    fontSize: 25,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w700),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: size.height * 0.03,
+          ),
+          OrderList()
+        ],
       ),
     );
   }
 }
-

@@ -1,11 +1,44 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delibuddy/components/rounded_button.dart';
 import 'package:delibuddy/constants.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart' hide BoxDecoration, BoxShadow;
 import 'package:flutter_inset_box_shadow/flutter_inset_box_shadow.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class OrderDescription extends StatelessWidget {
-  const OrderDescription({super.key});
+  OrderDescription({super.key});
+  TextEditingController textController = TextEditingController();
+  void addOrder() async {
+    try {
+      // Get a reference to the 'orders' collection
+      final documentSnapshot = await FirebaseFirestore.instance
+          .collection('orders')
+          .doc('orders')
+          .get();
+      final documentRef =
+          FirebaseFirestore.instance.collection('orders').doc('orders');
+
+      final currentOrders = (documentSnapshot.data()!['orders']);
+      print("adadas $currentOrders");
+      final order = {
+        'name': 'Harcoded name',
+        'email': FirebaseAuth.instance.currentUser!.email,
+        'description': textController.text,
+        'price': '10',
+        'timestamp': Timestamp.now()
+      };
+      print("NEw order $order");
+      currentOrders.add(order);
+
+      await documentRef.update({'orders': currentOrders});
+
+      Fluttertoast.showToast(msg: 'Order added to orders array successfully.');
+    } catch (e) {
+      Fluttertoast.showToast(msg: 'Error adding order to orders array: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,32 +58,6 @@ class OrderDescription extends StatelessWidget {
                   SizedBox(
                     width: size.width * 0.03,
                   ),
-                  // Text(
-                  //   'Description',
-                  //   style: GoogleFonts.sourceSansPro(
-                  //       fontSize: 25,
-                  //       color: Colors.black,
-                  //       fontWeight: FontWeight.w700),
-                  // ),
-                  Spacer(),
-                  // Container(
-                  //   padding: EdgeInsets.all(2),
-                  //   height: size.height * 0.055,
-                  //   width: size.width * 0.22,
-                  //   decoration: BoxDecoration(
-                  //     color: Color(0xffE1573A),
-                  //     borderRadius: BorderRadius.circular(25),
-                  //   ),
-                  //   child: Center(
-                  //     child: Text(
-                  //       'Order',
-                  //       style: GoogleFonts.sourceSansPro(
-                  //           fontSize: 25,
-                  //           color: Colors.white,
-                  //           fontWeight: FontWeight.w600),
-                  //     ),
-                  //   ),
-                  // )
                 ],
               ),
               SizedBox(
@@ -101,6 +108,7 @@ class OrderDescription extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.all(20.0),
                   child: TextField(
+                    controller: textController,
                     style: GoogleFonts.sourceSansPro(
                         fontSize: 20,
                         color: Colors.black,
@@ -121,6 +129,7 @@ class OrderDescription extends StatelessWidget {
                 size: size,
                 second: false,
                 func: () {
+                  addOrder();
                   // Navigator.push(
                   //     context,
                   //     MaterialPageRoute(

@@ -48,68 +48,14 @@ class ChatScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       ChatMessage(
-                        message: ' Hi',
-                        receiver: true,
-                      ),
-                      ChatMessage(
-                        message: 'HAT',
+                        message: ' Hello namaste aunty',
                         receiver: false,
+                        size: size,
                       ),
                       ChatMessage(
-                        message: ' What',
+                        message: 'Chalo kaam ki baat par aate hain',
                         receiver: true,
-                      ),
-                      ChatMessage(
-                        message: ' Chal bey',
-                        receiver: false,
-                      ),
-                      ChatMessage(
-                        message: ' Why',
-                        receiver: true,
-                      ),
-                      ChatMessage(
-                        message: ' Get Lost',
-                        receiver: false,
-                      ),
-                      ChatMessage(
-                        message: 'Crying Silently',
-                        receiver: true,
-                      ),
-                      ChatMessage(
-                        message: 'Ab ki baar Gautam Sarkar',
-                        receiver: false,
-                      ),
-                      ChatMessage(
-                        message: ' Nhi Kejriwal',
-                        receiver: true,
-                      ),
-                      ChatMessage(
-                        message: 'HAT',
-                        receiver: false,
-                      ),
-                      ChatMessage(
-                        message: ' What',
-                        receiver: true,
-                      ),
-                      ChatMessage(
-                        message: ' I will kick your aSS',
-                        receiver: false,
-                      ),
-                      ChatMessage(
-                        message: ' I know Devansh',
-                        receiver: true,
-                      ),
-                      ChatMessage(
-                        message: ' Lord Devansh',
-                        receiver: false,
-                      ),
-                      ChatMessage(
-                        message: 'He is your fan',
-                        receiver: true,
-                      ),
-                      ChatMessage(
-                        message: 'Good Boy',
-                        receiver: false,
+                        size: size,
                       ),
                     ],
                   ),
