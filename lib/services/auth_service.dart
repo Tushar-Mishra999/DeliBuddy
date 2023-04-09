@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:delibuddy/views/order_request/order_request.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -91,10 +92,24 @@ class AuthService {
       prefs.setString('email', email);
       prefs.setBool('isLoggedIn', true);
       Fluttertoast.showToast(msg: "Login Successful", backgroundColor: color1);
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => HomeScreen()),
-          (route) => false);
+
+      final DocumentSnapshot<Map<String, dynamic>> deliverySnapshot =
+          await FirebaseFirestore.instance
+              .collection('delivery')
+              .doc('delivery')
+              .get();
+
+      List<String> deliveryEmail = List<String>.from(deliverySnapshot.data()!['email']);
+
+      if (deliveryEmail.contains(email)) {
+        prefs.setBool('isClient', false);
+        Navigator.pushNamedAndRemoveUntil(
+            context, OrderRequest.routeName, (route) => false);
+      } else {
+        prefs.setBool('isClient', true);
+        Navigator.pushNamedAndRemoveUntil(
+            context, HomeScreen.routeName, (route) => false);
+      }
     } on FirebaseAuthException catch (error) {
       switch (error.code) {
         case "invalid-email":

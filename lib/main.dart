@@ -23,7 +23,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-bool _isLoggedIn = false;
+  bool _isLoggedIn = false;
+  bool _isClient = true;
   @override
   void initState() {
     super.initState();
@@ -33,10 +34,13 @@ bool _isLoggedIn = false;
   void checkLoginStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    bool isClient = prefs.getBool('isClient') ?? true;
     setState(() {
       _isLoggedIn = isLoggedIn;
+      _isClient=isClient;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -46,7 +50,8 @@ bool _isLoggedIn = false;
         primarySwatch: Colors.blue,
       ),
       onGenerateRoute: (settings) => generateRoute(settings),
-      home: _isLoggedIn?const HomeScreen():const OnboardingScreen(),
+       home:OnboardingScreen(),
+    //  home: _isLoggedIn ? _isClient?const HomeScreen():const OrderRequest() : const OnboardingScreen(),
     );
   }
 }

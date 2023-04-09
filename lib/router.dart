@@ -3,6 +3,7 @@ import 'package:delibuddy/views/home/home_screen.dart';
 import 'package:delibuddy/views/auth/login_screen.dart';
 import 'package:delibuddy/views/auth/registration_screen.dart';
 import 'package:delibuddy/views/order_description.dart';
+import 'package:delibuddy/views/order_request/order_request.dart';
 import 'package:flutter/material.dart';
 
 
@@ -22,6 +23,11 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
       return MaterialPageRoute(
         settings: routeSettings,
         builder: (_) => const HomeScreen(),
+      );
+    case OrderRequest.routeName:
+      return MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) => const OrderRequest(),
       );
     case EmailVerification.routeName:
       return MaterialPageRoute(

@@ -10,6 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class OrderRequest extends StatefulWidget {
+  static const routeName = '/order-request';
   const OrderRequest({super.key});
 
   @override
