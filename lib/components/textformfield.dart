@@ -44,6 +44,21 @@ class CustomTextField extends StatelessWidget {
             child: TextFormField(
               controller: controller,
               obscureText: obscure,
+              validator: title == 'SNU ID'
+                  ? (value) {
+                      RegExp regex = RegExp(r'^[\w-\.]+@snu\.edu\.in$');
+                      if (!regex.hasMatch(value!)) {
+                        return 'Please enter a valid email with the @snu.edu.in domain';
+                      } else {
+                        return null;
+                      }
+                    }
+                  : (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Enter your $hintText';
+                      }
+                      return null;
+                    },
               style: GoogleFonts.sourceSansPro(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
@@ -55,12 +70,6 @@ class CustomTextField extends StatelessWidget {
                     GoogleFonts.sourceSansPro(color: Colors.grey, fontSize: 15),
                 border: InputBorder.none,
               ),
-              validator: (val) {
-                if (val == null || val.isEmpty) {
-                  return 'Enter your $hintText';
-                }
-                return null;
-              },
               maxLines: maxLines,
             ),
           ),

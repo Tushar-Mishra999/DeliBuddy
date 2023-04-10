@@ -49,13 +49,6 @@ class RequestCard extends StatelessWidget {
                     fontSize: 24,
                     fontWeight: FontWeight.w500),
               ),
-              // Text(
-              //   "\u20B9$price",
-              //   style: GoogleFonts.sourceSansPro(
-              //       color: Colors.white,
-              //       fontSize: 24,
-              //       fontWeight: FontWeight.w500),
-              // ),
             ],
           ),
         ),
@@ -110,7 +103,7 @@ class RequestCard extends StatelessWidget {
                   'chatRoomId': "$email,$name:$deliveryEmail,$deliveryName",
                   'type': type,
                   'description':description,
-                  'otp':otp
+                  'otp':otp.toString()
                 });
                 await FirebaseFirestore.instance
                     .collection('orders')

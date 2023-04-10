@@ -1,10 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:delibuddy/views/order_request/order_request.dart';
 import 'package:flutter/material.dart' hide BoxDecoration, BoxShadow;
 import 'package:delibuddy/constants.dart';
 import 'package:flutter_inset_box_shadow/flutter_inset_box_shadow.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class OtpTextField extends StatelessWidget {
+class OtpTextField extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
   final int maxLines;
@@ -20,6 +23,30 @@ class OtpTextField extends StatelessWidget {
     required this.otp,
     this.maxLines = 1,
   }) : super(key: key);
+
+  @override
+  State<OtpTextField> createState() => _OtpTextFieldState();
+}
+
+class _OtpTextFieldState extends State<OtpTextField> {
+  void updateOrderStatus(String deliveryName) {
+    DocumentReference ordersDoc =
+        FirebaseFirestore.instance.collection('orders').doc('orders');
+
+    ordersDoc.get().then((docSnapshot) {
+      List<dynamic> orderList = docSnapshot.get('orders');
+      for (int i = 0; i < orderList.length; i++) {
+        Map<dynamic, dynamic> orderMap = orderList[i];
+        if (orderMap['deliveryName'] == deliveryName) {
+          orderMap['status'] = 'success';
+          orderList[i] = orderMap;
+          break;
+        }
+      }
+      ordersDoc.update({'orders': orderList});
+      Navigator.pushNamedAndRemoveUntil(context, OrderRequest.routeName, (route) => false);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,21 +75,25 @@ class OtpTextField extends StatelessWidget {
       ),
       child: Center(
         child: TextFormField(
-          onFieldSubmitted: (value) {
-            if (value == otp) {
-              Fluttertoast.showToast(
-                  msg: "Order verified", backgroundColor: color1);
+          onFieldSubmitted: (value) async {
+            if (value == widget.otp) {
+               Fluttertoast.showToast(
+                  msg: "OTP accepted", backgroundColor: color1);
+              SharedPreferences sharedPreferences =
+                  await SharedPreferences.getInstance();
+              String deliveryName = sharedPreferences.getString('name')??'';
+              updateOrderStatus(deliveryName);
             } else {
               Fluttertoast.showToast(
                   msg: "Wrong otp, please try again", backgroundColor: color1);
             }
           },
-          controller: controller,
-          obscureText: obscure,
+          controller: widget.controller,
+          obscureText: widget.obscure,
           style: GoogleFonts.sourceSansPro(
               color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15),
           decoration: InputDecoration(
-            hintText: hintText,
+            hintText: widget.hintText,
             contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
             hintStyle:
                 GoogleFonts.sourceSansPro(color: Colors.grey, fontSize: 15),
@@ -70,11 +101,11 @@ class OtpTextField extends StatelessWidget {
           ),
           validator: (val) {
             if (val == null || val.isEmpty) {
-              return 'Enter your $hintText';
+              return 'Enter your ${widget.hintText}';
             }
             return null;
           },
-          maxLines: maxLines,
+          maxLines: widget.maxLines,
         ),
       ),
     );

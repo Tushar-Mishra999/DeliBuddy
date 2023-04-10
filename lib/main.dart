@@ -50,12 +50,7 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.blue,
       ),
       onGenerateRoute: (settings) => generateRoute(settings),
-      home: OrderDetail(
-        otp: '1234',
-        description: '2 idli, 3 vadad',
-        type: 'delivery',
-      ),
-      // home: _isLoggedIn ? _type=='client'?const HomeScreen():const OrderRequest() : const OnboardingScreen(),
+      home: _isLoggedIn ? _type=='client'?const HomeScreen():const OrderRequest() : const OnboardingScreen(),
     );
   }
 }

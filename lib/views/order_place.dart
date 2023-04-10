@@ -91,17 +91,20 @@ class _OrderDescriptionState extends State<OrderDescription> {
 
       Map<String, dynamic> mp = {};
       List<dynamic> orders = documentSnapshot.data()!['orders'];
-      orders.forEach((order) {
+      for (var order in orders) {
         if (order['name'] == clientName) {
           mp = order;
+          break;
         }
-      });
+      }
+      
       Navigator.popAndPushNamed(context, ChatScreen.routeName, arguments: {
         'name': mp['deliveryName'],
-        'chatRoomId': "$clientEmail,$clientName:$mp['deliveryEmail'],$mp['deliveryName']",
+        'chatRoomId':
+            "$clientEmail,$clientName:${mp['deliveryEmail']},${mp['deliveryName']}",
         'type': type,
-        'otp':mp['otp'],
-        'description':mp['description']
+        'otp': mp['otp'].toString(),
+        'description': mp['description']
       });
     }
   }
