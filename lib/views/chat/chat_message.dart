@@ -10,10 +10,9 @@ class ChatMessage extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     return Row(
       mainAxisAlignment:
-          receiver != true ? MainAxisAlignment.end : MainAxisAlignment.start,
+          receiver ? MainAxisAlignment.start : MainAxisAlignment.end,
       children: [
         Container(
-          height: size.height * 0.05,
           padding: const EdgeInsets.only(left: 20, right: 20),
           margin: const EdgeInsets.only(bottom: 15),
           decoration: BoxDecoration(
@@ -23,6 +22,7 @@ class ChatMessage extends StatelessWidget {
           child: Center(
             child: Text(
               message,
+              maxLines: 5,
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 15,
@@ -30,7 +30,7 @@ class ChatMessage extends StatelessWidget {
               ),
             ),
           ),
-        )
+        ),
       ],
     );
   }

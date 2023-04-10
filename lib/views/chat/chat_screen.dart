@@ -77,7 +77,13 @@ class _ChatScreenState extends State<ChatScreen> {
 
     receiverName = type == 'delivery' ? mp['name'] : mp['deliveryName'];
 
-    chatRoomId =mp['email']+','+mp['name']+":"+mp['deliveryEmail']+','+mp['deliveryName'];
+    chatRoomId = mp['email'] +
+        ',' +
+        mp['name'] +
+        ":" +
+        mp['deliveryEmail'] +
+        ',' +
+        mp['deliveryName'];
     otp = mp['otp'].toString();
     description = mp['description'];
 
@@ -89,12 +95,13 @@ class _ChatScreenState extends State<ChatScreen> {
     setState(() {});
   }
 
-  void sendMessage() async {
+  void sendMessage({bool isImage = false}) async {
     if (messageController.text.isNotEmpty) {
       Map<String, dynamic> messageMap = {
         "message": messageController.text,
         "sender": type == 'client' ? 'client' : 'delivery',
-        "time": DateTime.now().millisecondsSinceEpoch
+        "time": DateTime.now().millisecondsSinceEpoch,
+        "isImage": isImage
       };
 
       FirebaseFirestore.instance.collection('chats').doc(chatRoomId).update({
@@ -108,6 +115,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget ChatMessageList() {
+    final size = MediaQuery.of(context).size;
     return StreamBuilder(
       stream: chatStream,
       builder: (context, snapshot) {
@@ -115,19 +123,34 @@ class _ChatScreenState extends State<ChatScreen> {
           List<dynamic> chatList = snapshot.data!['chats'];
           chatList = List.from(chatList.reversed);
 
-          return Expanded(
-            child: ListView.builder(
-              shrinkWrap: true,
-              reverse: true,
-              itemCount: chatList.length,
-              itemBuilder: (context, index) {
-                Map<String, dynamic> chatMessage = chatList[index];
-                return ChatMessage(
-                  message: chatMessage['message'],
-                  receiver: chatMessage['sender'] == type ? false : true,
-                );
-              },
-            ),
+          return ListView.builder(
+            shrinkWrap: true,
+            reverse: true,
+            itemCount: chatList.length,
+            itemBuilder: (context, index) {
+              Map<String, dynamic> chatMessage = chatList[index];
+              return chatMessage['isImage']
+                  ? Row(
+                      mainAxisAlignment: chatMessage['sender'] == type
+                          ? MainAxisAlignment.end
+                          : MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: size.width * 0.7,
+                          height: size.width * 0.7,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              image: DecorationImage(
+                                  image: NetworkImage(chatMessage['message']),
+                                  fit: BoxFit.fill)),
+                        ),
+                      ],
+                    )
+                  : ChatMessage(
+                      message: chatMessage['message'],
+                      receiver: chatMessage['sender'] == type ? false : true,
+                    );
+            },
           );
         } else {
           return Container();

@@ -29,8 +29,8 @@ class RequestCard extends StatelessWidget {
       decoration:
           BoxDecoration(color: color2, borderRadius: BorderRadius.circular(10)),
       margin: const EdgeInsets.all(10),
-      height: size.height * 0.2,
       width: size.width * 0.8,
+      height: size.height * 0.2,
       child: Column(children: [
         Padding(
           padding: const EdgeInsets.only(top: 8.0, left: 12, right: 12),
@@ -52,21 +52,15 @@ class RequestCard extends StatelessWidget {
             ],
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Text(
-                description,
-                textAlign: TextAlign.left,
-                style: GoogleFonts.sourceSansPro(
-                    color: Colors.white,
-                    fontSize: 17,
-                    fontWeight: FontWeight.w500),
-              ),
-            ),
-          ],
+        Container(
+          width: size.width * 1,
+          padding: const EdgeInsets.all(12.0),
+          child: Text(
+            description,
+            textAlign: TextAlign.left,
+            style: GoogleFonts.sourceSansPro(
+                color: Colors.white, fontSize: 17, fontWeight: FontWeight.w500),
+          ),
         ),
         const Spacer(),
         Row(
@@ -95,9 +89,9 @@ class RequestCard extends StatelessWidget {
                   }
                 });
                 await FirebaseFirestore.instance
-            .collection('chats')
-            .doc("$email,$name:$deliveryEmail,$deliveryName")
-            .set({'chats': []});
+                    .collection('chats')
+                    .doc("$email,$name:$deliveryEmail,$deliveryName")
+                    .set({'chats': []});
                 Navigator.pushNamed(context, ChatScreen.routeName, arguments: {
                   // 'name': name,
                   // 'chatRoomId': "$email,$name:$deliveryEmail,$deliveryName",

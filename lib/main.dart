@@ -50,8 +50,8 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.blue,
       ),
       onGenerateRoute: (settings) => generateRoute(settings),
-      home: const OnboardingScreen(),
-      //home: _isLoggedIn ? _type=='client'?const HomeScreen():const OrderRequest() : const OnboardingScreen(),
+      //home: const OnboardingScreen(),
+      home: _isLoggedIn ? _type=='client'?const HomeScreen():const OrderRequest() : const OnboardingScreen(),
     );
   }
 }

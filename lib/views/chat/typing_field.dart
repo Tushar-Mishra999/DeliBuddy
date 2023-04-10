@@ -1,7 +1,10 @@
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:delibuddy/constants.dart';
 import 'package:flutter/material.dart';
 
-class TypingField extends StatelessWidget {
+class TypingField extends StatefulWidget {
   const TypingField(
       {Key? key,
       required this.size,
@@ -12,12 +15,34 @@ class TypingField extends StatelessWidget {
   final Size size;
   final TextEditingController textController;
   final Function func;
+
+  @override
+  State<TypingField> createState() => _TypingFieldState();
+}
+
+class _TypingFieldState extends State<TypingField> {
+  String? _imageUrl;
+  Future<File?> pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    return pickedFile != null ? File(pickedFile.path) : null;
+  }
+
+  Future<String?> uploadImage(File file) async {
+    final fileName = file.path.split('/').last;
+    final reference = FirebaseStorage.instance.ref().child(fileName);
+    final uploadTask = reference.putFile(file);
+    final snapshot = await uploadTask.whenComplete(() {});
+    final downloadUrl = await snapshot.ref.getDownloadURL();
+    return downloadUrl;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 20),
-      width: size.width * 0.9,
-      height: size.height * 0.06,
+      margin: const EdgeInsets.only(bottom: 20),
+      width: widget.size.width * 0.9,
+      height: widget.size.height * 0.08,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         color: Colors.white,
@@ -26,11 +51,11 @@ class TypingField extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: size.width * 0.75,
+            width: widget.size.width * 0.75,
             child: TextField(
-              controller: textController,
+              controller: widget.textController,
               onSubmitted: (value) {
-                func();
+                widget.func(isImage: true);
               },
               style: TextStyle(
                 color: Colors.grey.shade800,
@@ -41,13 +66,27 @@ class TypingField extends StatelessWidget {
               decoration: const InputDecoration(
                   hintText: "Type a message",
                   border: InputBorder.none,
-                  hintStyle: const TextStyle(
-                      color: Color.fromARGB(255, 176, 176, 176))),
+                  hintStyle:
+                      TextStyle(color: Color.fromARGB(255, 176, 176, 176))),
             ),
           ),
-          Icon(
-            Icons.attach_file,
-            color: color1,
+          GestureDetector(
+            onTap: () async {
+              final file = await pickImage();
+              if (file != null) {
+                final url = await uploadImage(file);
+                if (url != null) {
+                  setState(() {
+                    _imageUrl = url;
+                    widget.textController.text = _imageUrl!;
+                  });
+                }
+              }
+            },
+            child: const Icon(
+              Icons.attach_file,
+              color: color1,
+            ),
           ),
         ],
       ),
