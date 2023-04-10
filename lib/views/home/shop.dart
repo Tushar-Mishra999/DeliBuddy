@@ -17,6 +17,9 @@ class Shop extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        if (!status) {
+          return;
+        }
         Navigator.pushNamed(context, OrderDescription.routeName, arguments: {
           'shopName': name,
         });
@@ -38,9 +41,11 @@ class Shop extends StatelessWidget {
                     fontSize: 20, color: bgcolor, fontWeight: FontWeight.w800),
               ),
               Text(
-                status?'OPEN':'CLOSED',
+                status ? 'OPEN' : 'CLOSED',
                 style: GoogleFonts.sourceSansPro(
-                    fontSize: 20, color: status?bgcolor:color1, fontWeight: FontWeight.w500),
+                    fontSize: 20,
+                    color: status ? bgcolor : color1,
+                    fontWeight: FontWeight.w500),
               ),
             ],
           ),

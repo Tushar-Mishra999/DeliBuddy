@@ -85,7 +85,7 @@ class RequestCard extends StatelessWidget {
                         .get();
 
                 List<dynamic> orders = documentSnapshot.data()!['orders'];
-                int otp = Random().nextInt(9999) + 1000;
+                int otp = Random().nextInt(9000) + 1000;
                 orders.forEach((order) {
                   if (order['name'] == name) {
                     order['deliveryName'] = deliveryName;
@@ -94,16 +94,16 @@ class RequestCard extends StatelessWidget {
                     order['otp'] = otp.toString();
                   }
                 });
-                FirebaseFirestore.instance
+                await FirebaseFirestore.instance
             .collection('chats')
             .doc("$email,$name:$deliveryEmail,$deliveryName")
-            .set({'chat': []});
+            .set({'chats': []});
                 Navigator.pushNamed(context, ChatScreen.routeName, arguments: {
-                  'name': name,
-                  'chatRoomId': "$email,$name:$deliveryEmail,$deliveryName",
-                  'type': type,
-                  'description':description,
-                  'otp':otp.toString()
+                  // 'name': name,
+                  // 'chatRoomId': "$email,$name:$deliveryEmail,$deliveryName",
+                  // 'type': type,
+                  // 'description':description,
+                  // 'otp':otp.toString()
                 });
                 await FirebaseFirestore.instance
                     .collection('orders')

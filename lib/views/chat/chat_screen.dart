@@ -10,60 +10,95 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatScreen extends StatefulWidget {
   static const routeName = '/chat-screen';
-  final String name;
-  final String chatRoomId;
-  final String type;
-  final String otp;
-  final String description;
-  ChatScreen(
-      {required this.otp,
-      required this.name,
-      required this.chatRoomId,
-      required this.type, required this.description});
+  // final String name;
+  // final String chatRoomId;
+  // final String type;
+  // final String otp;
+  // final String description;
+  // ChatScreen(
+  //     {required this.otp,
+  //     required this.name,
+  //     required this.chatRoomId,
+  //     required this.type,
+  //     required this.description});
 
+  const ChatScreen({super.key});
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  bool isLoading = true;
+  String otp = '';
+  String chatRoomId = '';
+  String type = '';
+  String description = '';
+  String receiverName = '';
+
   Stream<DocumentSnapshot>? chatStream;
   TextEditingController messageController = TextEditingController();
   @override
   void initState() {
     super.initState();
-    FirebaseFirestore.instance
-        .collection('chats')
-        .doc(widget.chatRoomId)
-        .get()
-        .then((docSnapshot) {
-      if (!docSnapshot.exists) {
-        FirebaseFirestore.instance
-            .collection('chats')
-            .doc(widget.chatRoomId)
-            .set({'chat': []});
+    // FirebaseFirestore.instance
+    //     .collection('chats')
+    //     .doc(widget.chatRoomId)
+    //     .get()
+    //     .then((docSnapshot) {
+    //   if (!docSnapshot.exists) {
+    //     FirebaseFirestore.instance
+    //         .collection('chats')
+    //         .doc(widget.chatRoomId)
+    //         .set({'chat': []});
+    //   }
+    // });
+
+    retrieveData();
+  }
+
+  void retrieveData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? name = prefs.getString('name');
+    type = prefs.getString('type')!;
+    final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+        await FirebaseFirestore.instance
+            .collection('orders')
+            .doc('orders')
+            .get();
+
+    Map<String, dynamic> mp = {};
+    List<dynamic> orders = documentSnapshot.data()!['orders'];
+    for (var order in orders) {
+      if (order['name'] == name || order['deliveryName'] == name) {
+        mp = order;
+        break;
       }
-    });
+    }
+
+    receiverName = type == 'delivery' ? mp['name'] : mp['deliveryName'];
+
+    chatRoomId =mp['email']+','+mp['name']+":"+mp['deliveryEmail']+','+mp['deliveryName'];
+    otp = mp['otp'].toString();
+    description = mp['description'];
 
     chatStream = FirebaseFirestore.instance
         .collection('chats')
-        .doc(widget.chatRoomId)
+        .doc(chatRoomId)
         .snapshots();
+    isLoading = false;
+    setState(() {});
   }
 
   void sendMessage() async {
-    print(widget.type);
     if (messageController.text.isNotEmpty) {
       Map<String, dynamic> messageMap = {
         "message": messageController.text,
-        "sender": widget.type == 'client' ? 'client' : 'delivery',
+        "sender": type == 'client' ? 'client' : 'delivery',
         "time": DateTime.now().millisecondsSinceEpoch
       };
 
-      FirebaseFirestore.instance
-          .collection('chats')
-          .doc(widget.chatRoomId)
-          .update({
-        'chat': FieldValue.arrayUnion([messageMap]),
+      FirebaseFirestore.instance.collection('chats').doc(chatRoomId).update({
+        'chats': FieldValue.arrayUnion([messageMap]),
       });
 
       setState(() {
@@ -77,7 +112,7 @@ class _ChatScreenState extends State<ChatScreen> {
       stream: chatStream,
       builder: (context, snapshot) {
         if (snapshot.data != null) {
-          List<dynamic> chatList = snapshot.data!['chat'];
+          List<dynamic> chatList = snapshot.data!['chats'];
           chatList = List.from(chatList.reversed);
 
           return Expanded(
@@ -89,7 +124,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 Map<String, dynamic> chatMessage = chatList[index];
                 return ChatMessage(
                   message: chatMessage['message'],
-                  receiver: chatMessage['sender'] == widget.type ? false : true,
+                  receiver: chatMessage['sender'] == type ? false : true,
                 );
               },
             ),
@@ -105,70 +140,80 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return Scaffold(
-      backgroundColor: bgcolor,
-      appBar: AppBar(
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
         backgroundColor: bgcolor,
-        automaticallyImplyLeading: false,
-        title: Container(
-          padding: const EdgeInsets.only(top: 10),
-          height: size.height * 0.05,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: size.width * 0.01,
-              ),
-              Text(
-                widget.name,
-                style: const TextStyle(
-                  color: color1,
-                  fontSize: 20,
-                  fontFamily: 'GilroyLight',
-                  fontWeight: FontWeight.w800,
+        appBar: AppBar(
+          backgroundColor: bgcolor,
+          automaticallyImplyLeading: false,
+          title: Container(
+            padding: const EdgeInsets.only(top: 10),
+            height: size.height * 0.05,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: size.width * 0.01,
                 ),
-              ),
-              const Spacer(),
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, OrderDetail.routeName,
-                      arguments: {
-                        'otp': widget.otp,
-                        'description': widget.description,
-                        'type': widget.type
-                      });
-                },
-                child: Icon(
-                  Icons.help_outline,
-                  color: color1,
+                Text(
+                  receiverName,
+                  style: const TextStyle(
+                    color: color1,
+                    fontSize: 20,
+                    fontFamily: 'GilroyLight',
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
-              )
-            ],
+                const Spacer(),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, OrderDetail.routeName,
+                        arguments: {
+                          'otp': otp,
+                          'description': description,
+                          'type': type
+                        });
+                  },
+                  child: Icon(
+                    Icons.info_outlined,
+                    color: color1,
+                  ),
+                )
+              ],
+            ),
           ),
         ),
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                child: Column(
+        body: SafeArea(
+          child: isLoading
+              ? Center(
+                  child: CircularProgressIndicator(
+                  color: color1,
+                ))
+              : Column(
                   children: [
-                    ChatMessageList(),
-                    SizedBox(
-                      height: size.height * 0.01,
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        child: Column(
+                          children: [
+                            ChatMessageList(),
+                            SizedBox(
+                              height: size.height * 0.01,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
+                    TypingField(
+                      size: size,
+                      func: sendMessage,
+                      textController: messageController,
+                    )
                   ],
                 ),
-              ),
-            ),
-            TypingField(
-              size: size,
-              func: sendMessage,
-              textController: messageController,
-            )
-          ],
         ),
       ),
     );

@@ -44,16 +44,16 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
         builder: (_) => OrderDescription(shopName: arguments['shopName'],),
       );
       case ChatScreen.routeName:
-      Map<String, dynamic> arguments =
-          routeSettings.arguments as Map<String, dynamic>;
+      // Map<String, dynamic> arguments =
+      //     routeSettings.arguments as Map<String, dynamic>;
           return  MaterialPageRoute(
         settings: routeSettings,
         builder: (_) => ChatScreen(
-          name:arguments['name'],
-          type: arguments['type'],
-          chatRoomId: arguments['chatRoomId'],
-          otp:arguments['otp'],
-          description: arguments['description'],
+          // name:arguments['name'],
+          // type: arguments['type'],
+          // chatRoomId: arguments['chatRoomId'],
+          // otp:arguments['otp'],
+          // description: arguments['description'],
         ),
       );
       case OrderDetail.routeName:
