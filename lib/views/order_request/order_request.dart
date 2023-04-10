@@ -41,29 +41,29 @@ class _OrderRequestState extends State<OrderRequest> {
         .collection('orders')
         .doc('orders')
         .snapshots();
-    Timer.periodic(Duration(minutes: 1), (timer) {
-      //  deleteOldOrders();
-    });
+    // Timer.periodic(const Duration(seconds: 30), (timer) {
+    //   deleteOldOrders();
+    // });
   }
 
-  // Future<void> deleteOldOrders() async {
-  //   final currentTime = DateTime.now().millisecondsSinceEpoch;
-  //   final ordersRef =
-  //       FirebaseFirestore.instance.collection('orders').doc('orders');
-  //   final docSnapshot = await ordersRef.get();
-  //   if (docSnapshot.exists) {
-  //     final orders =
-  //         List<Map<String, dynamic>>.from(docSnapshot.data()!['orders']);
-  //     final updatedOrders = <Map<String, dynamic>>[];
-  //     orders.forEach((order) {
-  //       final orderTime = order['timestamp'].millisecondsSinceEpoch;
-  //       if (currentTime - orderTime < 60000) {
-  //         updatedOrders.add(order);
-  //       }
-  //     });
-  //     await ordersRef.update({'orders': updatedOrders});
-  //   }
-  // }
+  Future<void> deleteOldOrders() async {
+    final currentTime = DateTime.now().millisecondsSinceEpoch;
+    final ordersRef =
+        FirebaseFirestore.instance.collection('orders').doc('orders');
+    final docSnapshot = await ordersRef.get();
+    if (docSnapshot.exists) {
+      final orders =
+          List<Map<String, dynamic>>.from(docSnapshot.data()!['orders']);
+      final updatedOrders = <Map<String, dynamic>>[];
+      orders.forEach((order) {
+        final orderTime = order['timestamp'].millisecondsSinceEpoch;
+        if (currentTime - orderTime < 60000) {
+          updatedOrders.add(order);
+        }
+      });
+      await ordersRef.update({'orders': updatedOrders});
+    }
+  }
 
   Widget OrderList() {
     //final user = Provider.of<UserProvider>(context, listen: false).user;
@@ -80,13 +80,13 @@ class _OrderRequestState extends State<OrderRequest> {
               itemCount: orderList.length,
               itemBuilder: (context, index) {
                 Map<String, dynamic> details = orderList[index];
-                return RequestCard(
+                return details['status']=='pending'?RequestCard(
                   size: size,
                   name: details['name'],
                   description: details['description'],
                   shop: details['shop'],
                   email: details['email'],
-                );
+                ):Container();
               },
             ),
           );

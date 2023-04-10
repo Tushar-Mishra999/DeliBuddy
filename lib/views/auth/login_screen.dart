@@ -28,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final size = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: kBgColor,
+      backgroundColor: bgcolor,
       body: Stack(children: [
         Center(
           child: Form(
@@ -68,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         isLoaded = false;
                         setState(() {});
                       },
-                      second: false,
+                      second: true,
                     ),
                     Padding(
                       padding: const EdgeInsets.all(12.0),
@@ -86,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               TextSpan(
                                 text: "Don't have an account? ",
                                 style: GoogleFonts.sourceSansPro(
-                                  color: color1,
+                                  color: Colors.black,
                                   fontSize: 20,
                                   fontWeight: FontWeight.w500,
                                 ),

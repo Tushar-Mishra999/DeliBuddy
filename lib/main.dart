@@ -3,7 +3,7 @@ import 'package:delibuddy/views/chat/chat_screen.dart';
 import 'package:delibuddy/views/home/home_screen.dart';
 import 'package:delibuddy/views/onboarding_screen.dart';
 import 'package:delibuddy/views/order_place.dart';
-import 'package:delibuddy/views/order_detail.dart';
+import 'package:delibuddy/views/detail/order_detail.dart';
 import 'package:delibuddy/views/order_request/order_request.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +24,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool _isLoggedIn = false;
-  bool _isClient = true;
+  String _type = 'client';
   @override
   void initState() {
     super.initState();
@@ -34,10 +34,10 @@ class _MyAppState extends State<MyApp> {
   void checkLoginStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-    bool isClient = prefs.getBool('isClient') ?? true;
+    String type = prefs.getString('type') ?? 'client';
     setState(() {
       _isLoggedIn = isLoggedIn;
-      _isClient=isClient;
+      _type = type;
     });
   }
 
@@ -50,8 +50,12 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.blue,
       ),
       onGenerateRoute: (settings) => generateRoute(settings),
-       home:OnboardingScreen(),
-    //  home: _isLoggedIn ? _isClient?const HomeScreen():const OrderRequest() : const OnboardingScreen(),
+      home: OrderDetail(
+        otp: '1234',
+        description: '2 idli, 3 vadad',
+        type: 'delivery',
+      ),
+      // home: _isLoggedIn ? _type=='client'?const HomeScreen():const OrderRequest() : const OnboardingScreen(),
     );
   }
 }

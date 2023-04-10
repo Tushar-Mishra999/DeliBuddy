@@ -30,7 +30,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: kBgColor,
+      backgroundColor: bgcolor,
       resizeToAvoidBottomInset: false,
       body: Stack(children: [
         Center(
@@ -99,7 +99,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         TextSpan(
                           text: "Login",
                           style: GoogleFonts.sourceSansPro(
-                            color: color1,
+                            color: Colors.black,
                             fontSize: 20,
                             fontWeight: FontWeight.w800,
                           ),

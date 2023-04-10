@@ -2,13 +2,16 @@ import 'package:delibuddy/constants.dart';
 import 'package:flutter/material.dart';
 
 class TypingField extends StatelessWidget {
-  const TypingField({
-    Key? key,
-    required this.size,
-  }) : super(key: key);
+  const TypingField(
+      {Key? key,
+      required this.size,
+      required this.textController,
+      required this.func})
+      : super(key: key);
 
   final Size size;
-
+  final TextEditingController textController;
+  final Function func;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -25,13 +28,16 @@ class TypingField extends StatelessWidget {
           Container(
             width: size.width * 0.75,
             child: TextField(
+              controller: textController,
+              onSubmitted: (value) {
+                func();
+              },
               style: TextStyle(
                 color: Colors.grey.shade800,
                 fontSize: 15,
                 fontFamily: 'GilroyLight',
                 fontWeight: FontWeight.bold,
               ),
-              onSubmitted: (val) {},
               decoration: const InputDecoration(
                   hintText: "Type a message",
                   border: InputBorder.none,

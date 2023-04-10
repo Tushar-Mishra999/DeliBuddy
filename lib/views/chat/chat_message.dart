@@ -4,27 +4,26 @@ import 'package:flutter/material.dart';
 class ChatMessage extends StatelessWidget {
   final String message;
   final bool receiver;
-  final Size size;
-  ChatMessage(
-      {required this.message, required this.receiver, required this.size});
+  ChatMessage({required this.message, required this.receiver});
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Row(
       mainAxisAlignment:
-          receiver == true ? MainAxisAlignment.end : MainAxisAlignment.start,
+          receiver != true ? MainAxisAlignment.end : MainAxisAlignment.start,
       children: [
         Container(
-          height: size.height * 0.06,
-          padding: const EdgeInsets.all(15),
+          height: size.height * 0.05,
+          padding: const EdgeInsets.only(left: 20, right: 20),
           margin: const EdgeInsets.only(bottom: 15),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(13),
-            color: receiver == true ? color1 : Colors.black,
+            color: receiver != true ? color1 : Colors.black,
           ),
           child: Center(
             child: Text(
               message,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 15,
                 fontFamily: 'GilroyLight',

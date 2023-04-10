@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delibuddy/components/rounded_button.dart';
 import 'package:delibuddy/constants.dart';
+import 'package:delibuddy/views/chat/chat_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart' hide BoxDecoration, BoxShadow;
 import 'package:flutter_inset_box_shadow/flutter_inset_box_shadow.dart';
@@ -21,16 +22,26 @@ class OrderDescription extends StatefulWidget {
 
 class _OrderDescriptionState extends State<OrderDescription> {
   TextEditingController textController = TextEditingController();
-
+  bool isOrdered = false;
+  late Timer _timer;
   @override
   void initState() {
     super.initState();
-    Timer.periodic(Duration(seconds: 10), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
       statusChecking();
     });
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _timer.cancel(); // Stop the timer when the widget is disposed
+  }
+
   void statusChecking() async {
+    if (!isOrdered) {
+      return;
+    }
     final DocumentReference ordersDocument =
         FirebaseFirestore.instance.collection('orders').doc('orders');
     final DocumentSnapshot<dynamic> orderDoc = await ordersDocument.get();
@@ -42,18 +53,18 @@ class _OrderDescriptionState extends State<OrderDescription> {
         .firstWhere((order) => order['email'] == email, orElse: () => null);
 
     String status = orderMap['status'];
-    final orderTimestamp =
-        orderMap['timestamp'].millisecondsSinceEpoch;
+    final orderTimestamp = orderMap['timestamp'].millisecondsSinceEpoch;
     final now = DateTime.now().millisecondsSinceEpoch;
 
-    if (now - orderTimestamp > 60000) {
-      Fluttertoast.showToast(
-          msg: 'No delivery partners were available', backgroundColor: color1);
-      orders.remove(orderMap);
-      await ordersDocument.set({
-        'orders': orders,
-      });
-    } else if (status == 'pending') {
+    // if (now - orderTimestamp > 60000) {
+    //   Fluttertoast.showToast(
+    //       msg: 'No delivery partners were available', backgroundColor: color1);
+    //   orders.remove(orderMap);
+    //   await ordersDocument.set({
+    //     'orders': orders,
+    //   });
+    // } else
+    if (status == 'pending') {
       Fluttertoast.showToast(
           msg: 'Waiting for delivery partners to accept',
           backgroundColor: color1);
@@ -62,10 +73,37 @@ class _OrderDescriptionState extends State<OrderDescription> {
           msg: 'Order rejected, please try again after sometime',
           backgroundColor: color1);
       orders.remove(orderMap);
+      isOrdered = false;
       await ordersDocument.set({
         'orders': orders,
       });
-    } else if (status == 'accept') {}
+    } else if (status == 'accepted') {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? clientName = prefs.getString('name');
+      String? clientEmail = prefs.getString('email');
+      String? type = prefs.getString('type');
+      final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+          await FirebaseFirestore.instance
+              .collection('orders')
+              .doc('orders')
+              .get();
+      isOrdered = false;
+
+      Map<String, dynamic> mp = {};
+      List<dynamic> orders = documentSnapshot.data()!['orders'];
+      orders.forEach((order) {
+        if (order['name'] == clientName) {
+          mp = order;
+        }
+      });
+      Navigator.popAndPushNamed(context, ChatScreen.routeName, arguments: {
+        'name': mp['deliveryName'],
+        'chatRoomId': "$clientEmail,$clientName:$mp['deliveryEmail'],$mp['deliveryName']",
+        'type': type,
+        'otp':mp['otp'],
+        'description':mp['description']
+      });
+    }
   }
 
   void addOrder() async {
@@ -142,9 +180,6 @@ class _OrderDescriptionState extends State<OrderDescription> {
               SizedBox(
                 height: size.height * 0.04,
               ),
-              // strokeWidth: 2,
-              // borderType: BorderType.RRect,
-              // radius: Radius.circular(12),
               Container(
                 height: size.height * 0.35,
                 width: size.width * 0.82,
@@ -190,6 +225,7 @@ class _OrderDescriptionState extends State<OrderDescription> {
                 size: size,
                 second: false,
                 func: () {
+                  isOrdered = true;
                   addOrder();
                   // Navigator.push(
                   //     context,

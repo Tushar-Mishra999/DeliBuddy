@@ -13,6 +13,7 @@ class OnboardingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: bgcolor,
       body: SafeArea(
         child: Column(

@@ -5,21 +5,20 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../constants.dart';
 
 class Shop extends StatelessWidget {
-  const Shop({
-    Key? key,
-    required this.size,
-    required this.name,
-  }) : super(key: key);
+  const Shop(
+      {Key? key, required this.size, required this.name, required this.status})
+      : super(key: key);
 
   final Size size;
   final String name;
+  final bool status;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, OrderDescription.routeName,arguments: {
-          'shopName':name,
+        Navigator.pushNamed(context, OrderDescription.routeName, arguments: {
+          'shopName': name,
         });
       },
       child: Container(
@@ -39,9 +38,9 @@ class Shop extends StatelessWidget {
                     fontSize: 20, color: bgcolor, fontWeight: FontWeight.w800),
               ),
               Text(
-                'OPEN',
+                status?'OPEN':'CLOSED',
                 style: GoogleFonts.sourceSansPro(
-                    fontSize: 20, color: bgcolor, fontWeight: FontWeight.w500),
+                    fontSize: 20, color: status?bgcolor:color1, fontWeight: FontWeight.w500),
               ),
             ],
           ),

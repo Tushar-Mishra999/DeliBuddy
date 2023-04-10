@@ -1,4 +1,6 @@
 import 'package:delibuddy/views/auth/email_verification.dart';
+import 'package:delibuddy/views/chat/chat_screen.dart';
+import 'package:delibuddy/views/detail/order_detail.dart';
 import 'package:delibuddy/views/home/home_screen.dart';
 import 'package:delibuddy/views/auth/login_screen.dart';
 import 'package:delibuddy/views/auth/registration_screen.dart';
@@ -40,6 +42,30 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
       return MaterialPageRoute(
         settings: routeSettings,
         builder: (_) => OrderDescription(shopName: arguments['shopName'],),
+      );
+      case ChatScreen.routeName:
+      Map<String, dynamic> arguments =
+          routeSettings.arguments as Map<String, dynamic>;
+          return  MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) => ChatScreen(
+          name:arguments['name'],
+          type: arguments['type'],
+          chatRoomId: arguments['chatRoomId'],
+          otp:arguments['otp'],
+          description: arguments['description'],
+        ),
+      );
+      case OrderDetail.routeName:
+      Map<String, dynamic> arguments =
+          routeSettings.arguments as Map<String, dynamic>;
+          return  MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) => OrderDetail(
+          otp: arguments['otp'],
+          description: arguments['description'],
+          type: arguments['type'],
+        ),
       );
     default:
       return MaterialPageRoute(

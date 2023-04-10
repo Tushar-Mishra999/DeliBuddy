@@ -16,7 +16,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<String> stores = [];
+  List<Map<String, dynamic>> stores = [];
 
   @override
   void initState() {
@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
             .get();
 
     setState(() {
-      stores = List<String>.from(snapshot.data()!['stores']);
+      stores = List<Map<String, dynamic>>.from(snapshot.data()!['stores']);
     });
   }
 
@@ -43,42 +43,46 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
         backgroundColor: bgcolor,
         body: SafeArea(
-          child: Column(children: [
-            SizedBox(
-              height: size.height * 0.06,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: size.width * 0.05,
-                ),
-                Text(
-                  'Search what you need',
-                  style: GoogleFonts.sourceSansPro(
-                      fontSize: 25,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w700),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: size.height * 0.03,
-            ),
-            Container(
-              width: size.width * 0.9,
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: stores.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Shop(
-                    size: size,
-                    name: stores[index],
-                  );
-                },
+          child: SingleChildScrollView(
+            child: Column(children: [
+              SizedBox(
+                height: size.height * 0.06,
               ),
-            )
-          ]),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: size.width * 0.05,
+                  ),
+                  Text(
+                    'Search what you need',
+                    style: GoogleFonts.sourceSansPro(
+                        fontSize: 25,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w700),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: size.height * 0.03,
+              ),
+              Container(
+                width: size.width * 0.9,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: stores.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Shop(
+                      size: size,
+                      name: stores[index]['name'],
+                      status: stores[index]['status'],
+                    );
+                  },
+                ),
+              )
+            ]),
+          ),
         ));
   }
 }

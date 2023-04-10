@@ -102,11 +102,11 @@ class AuthService {
       List<String> deliveryEmail = List<String>.from(deliverySnapshot.data()!['email']);
 
       if (deliveryEmail.contains(email)) {
-        prefs.setBool('isClient', false);
+        prefs.setString('type', "delivery");
         Navigator.pushNamedAndRemoveUntil(
             context, OrderRequest.routeName, (route) => false);
       } else {
-        prefs.setBool('isClient', true);
+        prefs.setString('type', "client");
         Navigator.pushNamedAndRemoveUntil(
             context, HomeScreen.routeName, (route) => false);
       }
