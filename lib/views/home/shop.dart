@@ -1,4 +1,4 @@
-import 'package:delibuddy/views/order_description.dart';
+import 'package:delibuddy/views/order_place.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 

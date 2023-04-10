@@ -31,11 +31,9 @@ class _OrderDescriptionState extends State<OrderDescription> {
   }
 
   void statusChecking() async {
-    final DocumentSnapshot<Map<String, dynamic>> orderDoc =
-        await FirebaseFirestore.instance
-            .collection('orders')
-            .doc('orders')
-            .get();
+    final DocumentReference ordersDocument =
+        FirebaseFirestore.instance.collection('orders').doc('orders');
+    final DocumentSnapshot<dynamic> orderDoc = await ordersDocument.get();
 
     List<dynamic> orders = orderDoc.data()!['orders'];
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -44,8 +42,30 @@ class _OrderDescriptionState extends State<OrderDescription> {
         .firstWhere((order) => order['email'] == email, orElse: () => null);
 
     String status = orderMap['status'];
+    final orderTimestamp =
+        orderMap['timestamp'].millisecondsSinceEpoch;
+    final now = DateTime.now().millisecondsSinceEpoch;
 
-    Fluttertoast.showToast(msg: status);
+    if (now - orderTimestamp > 60000) {
+      Fluttertoast.showToast(
+          msg: 'No delivery partners were available', backgroundColor: color1);
+      orders.remove(orderMap);
+      await ordersDocument.set({
+        'orders': orders,
+      });
+    } else if (status == 'pending') {
+      Fluttertoast.showToast(
+          msg: 'Waiting for delivery partners to accept',
+          backgroundColor: color1);
+    } else if (status == 'reject') {
+      Fluttertoast.showToast(
+          msg: 'Order rejected, please try again after sometime',
+          backgroundColor: color1);
+      orders.remove(orderMap);
+      await ordersDocument.set({
+        'orders': orders,
+      });
+    } else if (status == 'accept') {}
   }
 
   void addOrder() async {

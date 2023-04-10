@@ -2,7 +2,7 @@ import 'package:delibuddy/views/auth/email_verification.dart';
 import 'package:delibuddy/views/home/home_screen.dart';
 import 'package:delibuddy/views/auth/login_screen.dart';
 import 'package:delibuddy/views/auth/registration_screen.dart';
-import 'package:delibuddy/views/order_description.dart';
+import 'package:delibuddy/views/order_place.dart';
 import 'package:delibuddy/views/order_request/order_request.dart';
 import 'package:flutter/material.dart';
 
