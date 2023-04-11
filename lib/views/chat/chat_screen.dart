@@ -3,25 +3,15 @@ import 'package:delibuddy/constants.dart';
 import 'package:delibuddy/views/chat/chat_message.dart';
 import 'package:delibuddy/views/chat/typing_field.dart';
 import 'package:delibuddy/views/detail/order_detail.dart';
+import 'package:delibuddy/views/onboarding_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:math';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatScreen extends StatefulWidget {
   static const routeName = '/chat-screen';
-  // final String name;
-  // final String chatRoomId;
-  // final String type;
-  // final String otp;
-  // final String description;
-  // ChatScreen(
-  //     {required this.otp,
-  //     required this.name,
-  //     required this.chatRoomId,
-  //     required this.type,
-  //     required this.description});
-
   const ChatScreen({super.key});
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -35,7 +25,6 @@ class _ChatScreenState extends State<ChatScreen> {
   String description = '';
   String receiverName = '';
   bool isReferral = false;
-
   Stream<DocumentSnapshot>? chatStream;
   TextEditingController messageController = TextEditingController();
   @override
@@ -111,7 +100,13 @@ class _ChatScreenState extends State<ChatScreen> {
         if (snapshot.data != null) {
           List<dynamic> chatList = snapshot.data!['chats'];
           chatList = List.from(chatList.reversed);
-
+          bool isCancel = snapshot.data!['cancel'];
+          if (isCancel) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              Navigator.pushNamedAndRemoveUntil(
+                  context, OnboardingScreen.routeName, (route) => false);
+            });
+          }
           return Expanded(
             child: ListView.builder(
               shrinkWrap: true,
@@ -154,7 +149,6 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
     return WillPopScope(
       onWillPop: () async {
         return false;
@@ -182,13 +176,48 @@ class _ChatScreenState extends State<ChatScreen> {
                     fontWeight: FontWeight.w800,
                   ),
                 ),
-                const Spacer(),
+                SizedBox(
+                  width: size.width * 0.05,
+                ),
                 isReferral && type == 'delivery'
                     ? const Icon(
                         Icons.star,
                         color: color1,
                       )
                     : Container(),
+                const Spacer(),
+                GestureDetector(
+                  onTap: () async {
+                    DocumentReference docRef = await FirebaseFirestore.instance
+                        .collection('chats')
+                        .doc(chatRoomId);
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    prefs.setBool('isChat', false);
+                    DocumentReference ordersDoc = FirebaseFirestore.instance
+                        .collection('orders')
+                        .doc('orders');
+
+                    ordersDoc.get().then((docSnapshot) async {
+                      List<dynamic> orderList = docSnapshot.get('orders');
+                      for (int i = 0; i < orderList.length; i++) {
+                        Map<dynamic, dynamic> orderMap = orderList[i];
+                        if (orderMap['name'] == receiverName ||
+                            orderMap['deliveryName' == receiverName]) {
+                          orderList.remove(orderMap);
+                          ordersDoc.update({'orders': orderList});
+                        }
+                      }
+                    });
+                    await docRef.update({'cancel': true});
+                  },
+                  child: type == 'delivery'
+                      ? const Icon(
+                          Icons.cancel_outlined,
+                          color: color1,
+                        )
+                      : Container(),
+                ),
                 SizedBox(
                   width: size.width * 0.05,
                 ),
