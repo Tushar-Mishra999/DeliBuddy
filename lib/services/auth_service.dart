@@ -37,9 +37,24 @@ class AuthService {
             }
             mp['referralCount'] += 1;
             String docId = mp['email'];
+
+            //A refers B, so A also gets a coupon code
+            Random random = Random();
+            String alphabet = 'abcdefghijklmnopqrstuvwxyz';
+            List<dynamic> existingUserList = mp['referralList'];
+            String referralCoupon = '';
+            for (int i = 0; i < 6; i++) {
+              int index = random.nextInt(26);
+              referralCoupon += alphabet[index];
+            }
+            existingUserList.add(referralCoupon);
+            mp['referralList'] = existingUserList;
+
             final DocumentReference documentRef =
                 FirebaseFirestore.instance.collection('users').doc(docId);
             await documentRef.update(mp);
+
+            //if A refers B, B gets a referral coupon to redeem later
             referralList.add(referralProvided);
             isFound = true;
             break;
@@ -62,16 +77,19 @@ class AuthService {
       Random random = Random();
       String alphabet = 'abcdefghijklmnopqrstuvwxyz';
       String referralCode = '';
-
+      String deliBuddyCoupon = '';
       for (int i = 0; i < 6; i++) {
-        int index = random.nextInt(26);
-        referralCode += alphabet[index];
+        int index1 = random.nextInt(26);
+        referralCode += alphabet[index1];
+        int index2 = random.nextInt(26);
+        deliBuddyCoupon += alphabet[index2];
       }
+      referralList.add(deliBuddyCoupon); //Delibuddy's coupon to every new user
 
       final emailData = {
         'email': email,
         'name': name,
-        'referralCode': referralCode.toUpperCase(),
+        'referralCode': referralCode.toUpperCase(),// X gets a referral code, that he can give to others to redeem
         'referralList': referralList,
         'referralCount': 0
       };
