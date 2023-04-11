@@ -25,6 +25,7 @@ class _OrderDescriptionState extends State<OrderDescription> {
   TextEditingController addressController = TextEditingController();
   bool isOrdered = false;
   late Timer _timer;
+  String referralCode = '';
   @override
   void initState() {
     super.initState();
@@ -99,6 +100,19 @@ class _OrderDescriptionState extends State<OrderDescription> {
         }
       }
 
+      if(referralCode.isNotEmpty&&referralCode!='null'){
+        final DocumentSnapshot documentSnapshot2 = await FirebaseFirestore
+          .instance
+          .collection('users')
+          .doc(clientEmail)
+          .get();
+      List<dynamic> referralList = documentSnapshot2['referralList'];
+      referralList.remove(referralCode);
+      DocumentReference ordersDoc =
+          FirebaseFirestore.instance.collection('users').doc(clientEmail);
+      ordersDoc.update({'referralList': referralList});
+      }
+
       Navigator.popAndPushNamed(context, ChatScreen.routeName);
     }
   }
@@ -124,6 +138,8 @@ class _OrderDescriptionState extends State<OrderDescription> {
         'address': addressController.text,
         'shop': widget.shopName,
         'status': 'pending',
+        'isReferral':
+            referralCode.isNotEmpty&&referralCode!='null'? true : false,
         'timestamp': Timestamp.now()
       };
 
@@ -260,7 +276,10 @@ class _OrderDescriptionState extends State<OrderDescription> {
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, ReferralScreen.routeName);
+                  Navigator.pushNamed(context, ReferralScreen.routeName)
+                      .then((value) {
+                    referralCode = value.toString();
+                  });
                 },
                 child: Text(
                   'Apply Coupon',

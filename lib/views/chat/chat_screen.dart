@@ -34,6 +34,7 @@ class _ChatScreenState extends State<ChatScreen> {
   String type = '';
   String description = '';
   String receiverName = '';
+  bool isReferral = false;
 
   Stream<DocumentSnapshot>? chatStream;
   TextEditingController messageController = TextEditingController();
@@ -63,7 +64,7 @@ class _ChatScreenState extends State<ChatScreen> {
     }
 
     receiverName = type == 'delivery' ? mp['name'] : mp['deliveryName'];
-
+    isReferral = mp['isReferral'];
     chatRoomId = mp['email'] +
         ',' +
         mp['name'] +
@@ -182,6 +183,15 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 ),
                 const Spacer(),
+                isReferral && type == 'delivery'
+                    ? const Icon(
+                        Icons.star,
+                        color: color1,
+                      )
+                    : Container(),
+                SizedBox(
+                  width: size.width * 0.05,
+                ),
                 GestureDetector(
                   onTap: () {
                     Navigator.pushNamed(context, OrderDetail.routeName,
@@ -192,9 +202,9 @@ class _ChatScreenState extends State<ChatScreen> {
                         });
                   },
                   child: type == 'client'
-                      ? Text(
+                      ? const Text(
                           'PAY',
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: color2,
                             fontSize: 20,
                             fontFamily: 'GilroyLight',

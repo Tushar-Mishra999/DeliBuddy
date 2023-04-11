@@ -75,17 +75,26 @@ class _ReferralScreenState extends State<ReferralScreen> {
                   ),
                   Container(
                     width: size.width * 0.9,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: couponList.length,
-                      itemBuilder: (context, index) {
-                        String referralCode = couponList[index].toString();
-                        return CouponCard(
-                          description: 'Get 1 order delivered to your location',
-                          referralCode: referralCode,
-                        );
-                      },
-                    ),
+                    child: couponList.isEmpty
+                        ? Center(
+                            child: Text(
+                            'No coupons available',
+                            style: GoogleFonts.sourceSansPro(
+                                fontSize: 30, color: color2),
+                          ))
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: couponList.length,
+                            itemBuilder: (context, index) {
+                              String referralCode =
+                                  couponList[index].toString();
+                              return CouponCard(
+                                description:
+                                    'Get 1 order delivered to your location',
+                                referralCode: referralCode,
+                              );
+                            },
+                          ),
                   )
                 ],
               ),
