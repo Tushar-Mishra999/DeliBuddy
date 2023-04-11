@@ -85,6 +85,7 @@ class _OrderRequestState extends State<OrderRequest> {
                   name: details['name'],
                   description: details['description'],
                   shop: details['shop'],
+                  address: details['address'],
                   email: details['email'],
                 ):Container();
               },

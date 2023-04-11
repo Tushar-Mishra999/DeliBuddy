@@ -4,6 +4,7 @@ import 'package:delibuddy/views/detail/order_detail.dart';
 import 'package:delibuddy/views/home/home_screen.dart';
 import 'package:delibuddy/views/auth/login_screen.dart';
 import 'package:delibuddy/views/auth/registration_screen.dart';
+import 'package:delibuddy/views/onboarding_screen.dart';
 import 'package:delibuddy/views/order_place.dart';
 import 'package:delibuddy/views/order_request/order_request.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,11 @@ import 'package:flutter/material.dart';
 
 Route<dynamic> generateRoute(RouteSettings routeSettings) {
   switch (routeSettings.name) {
+    case OnboardingScreen.routeName:
+      return MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) => OnboardingScreen(),
+      );
     case LoginScreen.routeName:
       return MaterialPageRoute(
         settings: routeSettings,

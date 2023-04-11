@@ -20,7 +20,8 @@ class OrderDescription extends StatefulWidget {
 }
 
 class _OrderDescriptionState extends State<OrderDescription> {
-  TextEditingController textController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
   bool isOrdered = false;
   late Timer _timer;
   @override
@@ -96,15 +97,8 @@ class _OrderDescriptionState extends State<OrderDescription> {
           break;
         }
       }
-      
-      Navigator.popAndPushNamed(context, ChatScreen.routeName, arguments: {
-        'name': mp['deliveryName'],
-        'chatRoomId':
-            "$clientEmail,$clientName:${mp['deliveryEmail']},${mp['deliveryName']}",
-        'type': type,
-        'otp': mp['otp'].toString(),
-        'description': mp['description']
-      });
+
+      Navigator.popAndPushNamed(context, ChatScreen.routeName);
     }
   }
 
@@ -125,7 +119,8 @@ class _OrderDescriptionState extends State<OrderDescription> {
       final order = {
         'name': name,
         'email': email,
-        'description': textController.text,
+        'description': descriptionController.text,
+        'address': addressController.text,
         'shop': widget.shopName,
         'status': 'pending',
         'timestamp': Timestamp.now()
@@ -135,7 +130,7 @@ class _OrderDescriptionState extends State<OrderDescription> {
 
       await documentRef.update({'orders': currentOrders});
 
-      Fluttertoast.showToast(msg: 'Order added to orders array successfully.');
+      Fluttertoast.showToast(msg: 'Order has been placed successfully');
     } catch (e) {
       Fluttertoast.showToast(msg: 'Error adding order to orders array: $e');
     }
@@ -183,7 +178,7 @@ class _OrderDescriptionState extends State<OrderDescription> {
                 height: size.height * 0.04,
               ),
               Container(
-                height: size.height * 0.35,
+                height: size.height * 0.2,
                 width: size.width * 0.82,
                 decoration: BoxDecoration(
                   color: bgcolor,
@@ -206,7 +201,7 @@ class _OrderDescriptionState extends State<OrderDescription> {
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: TextField(
-                    controller: textController,
+                    controller: descriptionController,
                     style: GoogleFonts.sourceSansPro(
                         fontSize: 20,
                         color: Colors.black,
@@ -220,7 +215,47 @@ class _OrderDescriptionState extends State<OrderDescription> {
                 ),
               ),
               SizedBox(
+                height: size.height * 0.05,
+              ),
+              Container(
                 height: size.height * 0.2,
+                width: size.width * 0.82,
+                decoration: BoxDecoration(
+                  color: bgcolor,
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 15,
+                      offset: const Offset(0, 0),
+                      inset: true,
+                    ),
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.7),
+                      blurRadius: 15,
+                      offset: const Offset(7, 7),
+                      inset: true,
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: TextField(
+                    controller: addressController,
+                    style: GoogleFonts.sourceSansPro(
+                        fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w800),
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: "Delivery Point",
+                    ),
+                    maxLines: null,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: size.height * 0.1,
               ),
               RoundedButton(
                 title: "Order",

@@ -14,6 +14,7 @@ class RequestCard extends StatelessWidget {
       required this.name,
       required this.shop,
       required this.description,
+      required this.address,
       required this.email})
       : super(key: key);
 
@@ -22,6 +23,7 @@ class RequestCard extends StatelessWidget {
   final String shop;
   final String description;
   final String email;
+  final String address;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +32,6 @@ class RequestCard extends StatelessWidget {
           BoxDecoration(color: color2, borderRadius: BorderRadius.circular(10)),
       margin: const EdgeInsets.all(10),
       width: size.width * 0.8,
-      height: size.height * 0.2,
       child: Column(children: [
         Padding(
           padding: const EdgeInsets.only(top: 8.0, left: 12, right: 12),
@@ -54,7 +55,7 @@ class RequestCard extends StatelessWidget {
         ),
         Container(
           width: size.width * 1,
-          padding: const EdgeInsets.all(12.0),
+          padding: const EdgeInsets.only(top: 12.0, left: 12, right: 12),
           child: Text(
             description,
             textAlign: TextAlign.left,
@@ -62,7 +63,16 @@ class RequestCard extends StatelessWidget {
                 color: Colors.white, fontSize: 17, fontWeight: FontWeight.w500),
           ),
         ),
-        const Spacer(),
+        Container(
+          width: size.width * 1,
+          padding: const EdgeInsets.all(12.0),
+          child: Text(
+            address,
+            textAlign: TextAlign.left,
+            style: GoogleFonts.sourceSansPro(
+                color: Colors.white, fontSize: 17, fontWeight: FontWeight.w500),
+          ),
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -92,13 +102,7 @@ class RequestCard extends StatelessWidget {
                     .collection('chats')
                     .doc("$email,$name:$deliveryEmail,$deliveryName")
                     .set({'chats': []});
-                Navigator.pushNamed(context, ChatScreen.routeName, arguments: {
-                  // 'name': name,
-                  // 'chatRoomId': "$email,$name:$deliveryEmail,$deliveryName",
-                  // 'type': type,
-                  // 'description':description,
-                  // 'otp':otp.toString()
-                });
+                Navigator.pushNamed(context, ChatScreen.routeName);
                 await FirebaseFirestore.instance
                     .collection('orders')
                     .doc('orders')

@@ -1,13 +1,23 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:delibuddy/constants.dart';
 import 'package:delibuddy/views/auth/login_screen.dart';
 import 'package:delibuddy/views/auth/registration_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../components/rounded_button.dart';
 
-class OnboardingScreen extends StatelessWidget {
-  const OnboardingScreen({Key? key}) : super(key: key);
+class OnboardingScreen extends StatefulWidget {
+  static const routeName = '/onboarding-screen';
+  OnboardingScreen({Key? key}) : super(key: key);
+
+  @override
+  State<OnboardingScreen> createState() => _OnboardingScreenState();
+}
+
+class _OnboardingScreenState extends State<OnboardingScreen> {
+  int activeIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -25,50 +35,82 @@ class OnboardingScreen extends StatelessWidget {
                 height: size.height * 0.5,
               ),
             ),
-            Container(
-              width: size.width * 0.8,
-              child: RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: "Delivery",
-                      style: GoogleFonts.inter(
-                        color: color1,
-                        fontSize: 25,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    TextSpan(
-                      text: " at your doorstep, made easy.",
-                      style: GoogleFonts.inter(
-                        color: color2,
-                        fontSize: 25,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ],
+            Column(
+              children: [
+                CarouselSlider.builder(
+                  options: CarouselOptions(
+                      viewportFraction: 1,
+                      height: 200,
+                      pageSnapping: true,
+                      enableInfiniteScroll: false,
+                      enlargeCenterPage: false,
+                      onPageChanged: ((index, reason) {
+                        activeIndex = index;
+                        setState(() {});
+                      })),
+                  itemCount: 3,
+                  itemBuilder: (context, index, realIndex) {
+                    return Column(
+                      children: [
+                        Container(
+                          width: size.width * 0.9,
+                          child: RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: onboardingScreen[index]['first'],
+                                  style: GoogleFonts.inter(
+                                    color: color1,
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: onboardingScreen[index]['second'],
+                                  style: GoogleFonts.inter(
+                                    color: color2,
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.height * 0.03,
+                        ),
+                        Container(
+                          height: size.height * 0.1,
+                          width: size.width * 0.8,
+                          child: Text(
+                            onboardingScreen[index]['third']!,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.inter(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
-              ),
+                AnimatedSmoothIndicator(
+                  activeIndex: activeIndex,
+                  count: 3,
+                  effect: SlideEffect(
+                      activeDotColor: color1,
+                      dotWidth: 10,
+                      dotHeight: 10,
+                      dotColor: color2),
+                )
+              ],
             ),
             SizedBox(
-              height: size.height * 0.05,
-            ),
-            Container(
-              height: size.height * 0.1,
-              width: size.width * 0.8,
-              child: Text(
-                "Now get anything delivered to you at your hostel’s in just a few clicks from our affiliated stores and vendors",
-                textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 12,
-                ),
-              ),
-            ),
-            SizedBox(
-              height: size.height * 0.01,
+              height: size.height * 0.02,
             ),
             RoundedButton(
               title: "Login",

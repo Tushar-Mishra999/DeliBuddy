@@ -200,7 +200,15 @@ class _ChatScreenState extends State<ChatScreen> {
                           'type': type
                         });
                   },
-                  child: Icon(
+                  child: type=='client'? Text(
+                  'PAY',
+                  style: const TextStyle(
+                    color: color2,
+                    fontSize: 20,
+                    fontFamily: 'GilroyLight',
+                    fontWeight: FontWeight.w800,
+                  ),
+                ):Icon(
                     Icons.info_outlined,
                     color: color1,
                   ),

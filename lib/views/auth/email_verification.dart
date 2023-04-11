@@ -47,7 +47,7 @@ class _EmailVerificationState extends State<EmailVerification> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-        backgroundColor: kBgColor,
+        backgroundColor: bgcolor,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -55,9 +55,9 @@ class _EmailVerificationState extends State<EmailVerification> {
               Text(
                 "A verification link has been sent to ${user.email}, please verify it.",
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 20,
-                  color: Colors.grey.shade400,
+                  color: color2,
                 ),
               ),
               SizedBox(
