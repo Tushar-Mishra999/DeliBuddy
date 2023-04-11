@@ -8,30 +8,29 @@ class ChatMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return Row(
-      mainAxisAlignment:
-          receiver ? MainAxisAlignment.start : MainAxisAlignment.end,
-      children: [
-        Container(
-          padding: const EdgeInsets.only(left: 20, right: 20),
+    return Align(
+      alignment: receiver ? Alignment.centerLeft : Alignment.centerRight,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: size.width * 0.8),
+        child: Container(
+          padding:
+              const EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
           margin: const EdgeInsets.only(bottom: 15),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(13),
             color: receiver != true ? color1 : Colors.black,
           ),
-          child: Center(
-            child: Text(
-              message,
-              maxLines: 5,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 15,
-                fontFamily: 'GilroyLight',
-              ),
+          child: Text(
+            message,
+            maxLines: 5,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 15,
+              fontFamily: 'GilroyLight',
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 }

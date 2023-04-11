@@ -55,7 +55,7 @@ class _TypingFieldState extends State<TypingField> {
             child: TextField(
               controller: widget.textController,
               onSubmitted: (value) {
-                widget.func(isImage: true);
+                widget.func();
               },
               style: TextStyle(
                 color: Colors.grey.shade800,
@@ -79,6 +79,7 @@ class _TypingFieldState extends State<TypingField> {
                   setState(() {
                     _imageUrl = url;
                     widget.textController.text = _imageUrl!;
+                    widget.func(isImage: true);
                   });
                 }
               }

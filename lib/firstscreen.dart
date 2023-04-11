@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:delibuddy/constants.dart';
+import 'package:delibuddy/views/chat/chat_screen.dart';
 import 'package:delibuddy/views/home/home_screen.dart';
 import 'package:delibuddy/views/onboarding_screen.dart';
 import 'package:delibuddy/views/order_request/order_request.dart';
@@ -27,10 +28,15 @@ class _FirstScreenState extends State<FirstScreen> {
   void checkLoginStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    bool isChat = prefs.getBool('isChat') ?? false;
     String type = prefs.getString('type') ?? 'client';
     _timer = Timer(const Duration(seconds: 1), () {
       if (isLoggedIn) {
-        if (type == 'client') {
+        if(isChat){
+           Navigator.pushNamedAndRemoveUntil(
+              context, ChatScreen.routeName, (route) => false);
+        }
+        else if (type == 'client') {
           Navigator.pushNamedAndRemoveUntil(
               context, HomeScreen.routeName, (route) => false);
         } else {

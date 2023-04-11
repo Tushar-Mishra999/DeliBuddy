@@ -9,6 +9,8 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../profile/profile_screen.dart';
+
 class OrderRequest extends StatefulWidget {
   static const routeName = '/order-request';
   const OrderRequest({super.key});
@@ -80,14 +82,16 @@ class _OrderRequestState extends State<OrderRequest> {
               itemCount: orderList.length,
               itemBuilder: (context, index) {
                 Map<String, dynamic> details = orderList[index];
-                return details['status']=='pending'?RequestCard(
-                  size: size,
-                  name: details['name'],
-                  description: details['description'],
-                  shop: details['shop'],
-                  address: details['address'],
-                  email: details['email'],
-                ):Container();
+                return details['status'] == 'pending'
+                    ? RequestCard(
+                        size: size,
+                        name: details['name'],
+                        description: details['description'],
+                        shop: details['shop'],
+                        address: details['address'],
+                        email: details['email'],
+                      )
+                    : Container();
               },
             ),
           );
@@ -103,33 +107,52 @@ class _OrderRequestState extends State<OrderRequest> {
     final size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: bgcolor,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(
-            height: size.height * 0.1,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: size.width * 0.09,
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(context, ProfileScreen.routeName);
+                    },
+                    child: const Icon(
+                      Icons.person_outlined,
+                      size: 35,
+                    ),
+                  ),
+                ],
               ),
-              Text(
-                'Orders',
-                style: GoogleFonts.sourceSansPro(
-                    fontSize: 25,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w700),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: size.height * 0.03,
-          ),
-          OrderList()
-        ],
+            ),
+            SizedBox(
+              height: size.height * 0.05,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: size.width * 0.09,
+                ),
+                Text(
+                  'Orders',
+                  style: GoogleFonts.sourceSansPro(
+                      fontSize: 25,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w700),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: size.height * 0.03,
+            ),
+            OrderList()
+          ],
+        ),
       ),
     );
   }

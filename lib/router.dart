@@ -1,3 +1,4 @@
+import 'package:delibuddy/order/referral_screen.dart';
 import 'package:delibuddy/views/auth/email_verification.dart';
 import 'package:delibuddy/views/chat/chat_screen.dart';
 import 'package:delibuddy/views/detail/order_detail.dart';
@@ -5,10 +6,10 @@ import 'package:delibuddy/views/home/home_screen.dart';
 import 'package:delibuddy/views/auth/login_screen.dart';
 import 'package:delibuddy/views/auth/registration_screen.dart';
 import 'package:delibuddy/views/onboarding_screen.dart';
-import 'package:delibuddy/views/order_place.dart';
+import 'package:delibuddy/order/order_place.dart';
 import 'package:delibuddy/views/order_request/order_request.dart';
+import 'package:delibuddy/views/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
-
 
 Route<dynamic> generateRoute(RouteSettings routeSettings) {
   switch (routeSettings.name) {
@@ -16,6 +17,16 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
       return MaterialPageRoute(
         settings: routeSettings,
         builder: (_) => OnboardingScreen(),
+      );
+    case ProfileScreen.routeName:
+      return MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) => const ProfileScreen(),
+      );
+    case ReferralScreen.routeName:
+      return MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) => const ReferralScreen(),
       );
     case LoginScreen.routeName:
       return MaterialPageRoute(
@@ -25,7 +36,7 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
     case RegistrationScreen.routeName:
       return MaterialPageRoute(
         settings: routeSettings,
-        builder: (_) => RegistrationScreen(),
+        builder: (_) => const RegistrationScreen(),
       );
     case HomeScreen.routeName:
       return MaterialPageRoute(
@@ -42,30 +53,32 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
         settings: routeSettings,
         builder: (_) => EmailVerification(),
       );
-     case OrderDescription.routeName:
-     Map<String, dynamic> arguments =
+    case OrderDescription.routeName:
+      Map<String, dynamic> arguments =
           routeSettings.arguments as Map<String, dynamic>;
       return MaterialPageRoute(
         settings: routeSettings,
-        builder: (_) => OrderDescription(shopName: arguments['shopName'],),
-      );
-      case ChatScreen.routeName:
-      // Map<String, dynamic> arguments =
-      //     routeSettings.arguments as Map<String, dynamic>;
-          return  MaterialPageRoute(
-        settings: routeSettings,
-        builder: (_) => ChatScreen(
-          // name:arguments['name'],
-          // type: arguments['type'],
-          // chatRoomId: arguments['chatRoomId'],
-          // otp:arguments['otp'],
-          // description: arguments['description'],
+        builder: (_) => OrderDescription(
+          shopName: arguments['shopName'],
         ),
       );
-      case OrderDetail.routeName:
+    case ChatScreen.routeName:
+      // Map<String, dynamic> arguments =
+      //     routeSettings.arguments as Map<String, dynamic>;
+      return MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) => ChatScreen(
+            // name:arguments['name'],
+            // type: arguments['type'],
+            // chatRoomId: arguments['chatRoomId'],
+            // otp:arguments['otp'],
+            // description: arguments['description'],
+            ),
+      );
+    case OrderDetail.routeName:
       Map<String, dynamic> arguments =
           routeSettings.arguments as Map<String, dynamic>;
-          return  MaterialPageRoute(
+      return MaterialPageRoute(
         settings: routeSettings,
         builder: (_) => OrderDetail(
           otp: arguments['otp'],

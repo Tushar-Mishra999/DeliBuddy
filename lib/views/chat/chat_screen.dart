@@ -40,19 +40,6 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    // FirebaseFirestore.instance
-    //     .collection('chats')
-    //     .doc(widget.chatRoomId)
-    //     .get()
-    //     .then((docSnapshot) {
-    //   if (!docSnapshot.exists) {
-    //     FirebaseFirestore.instance
-    //         .collection('chats')
-    //         .doc(widget.chatRoomId)
-    //         .set({'chat': []});
-    //   }
-    // });
-
     retrieveData();
   }
 
@@ -91,6 +78,7 @@ class _ChatScreenState extends State<ChatScreen> {
         .collection('chats')
         .doc(chatRoomId)
         .snapshots();
+    prefs.setBool('isChat', true);
     isLoading = false;
     setState(() {});
   }
@@ -123,34 +111,37 @@ class _ChatScreenState extends State<ChatScreen> {
           List<dynamic> chatList = snapshot.data!['chats'];
           chatList = List.from(chatList.reversed);
 
-          return ListView.builder(
-            shrinkWrap: true,
-            reverse: true,
-            itemCount: chatList.length,
-            itemBuilder: (context, index) {
-              Map<String, dynamic> chatMessage = chatList[index];
-              return chatMessage['isImage']
-                  ? Row(
-                      mainAxisAlignment: chatMessage['sender'] == type
-                          ? MainAxisAlignment.end
-                          : MainAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: size.width * 0.7,
-                          height: size.width * 0.7,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              image: DecorationImage(
-                                  image: NetworkImage(chatMessage['message']),
-                                  fit: BoxFit.fill)),
-                        ),
-                      ],
-                    )
-                  : ChatMessage(
-                      message: chatMessage['message'],
-                      receiver: chatMessage['sender'] == type ? false : true,
-                    );
-            },
+          return Expanded(
+            child: ListView.builder(
+              shrinkWrap: true,
+              reverse: true,
+              itemCount: chatList.length,
+              itemBuilder: (context, index) {
+                Map<String, dynamic> chatMessage = chatList[index];
+                return chatMessage['isImage']
+                    ? Row(
+                        mainAxisAlignment: chatMessage['sender'] == type
+                            ? MainAxisAlignment.end
+                            : MainAxisAlignment.start,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(top: 15, bottom: 15),
+                            width: size.width * 0.7,
+                            height: size.width * 0.7,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                image: DecorationImage(
+                                    image: NetworkImage(chatMessage['message']),
+                                    fit: BoxFit.fill)),
+                          ),
+                        ],
+                      )
+                    : ChatMessage(
+                        message: chatMessage['message'],
+                        receiver: chatMessage['sender'] == type ? false : true,
+                      );
+              },
+            ),
           );
         } else {
           return Container();
@@ -200,18 +191,20 @@ class _ChatScreenState extends State<ChatScreen> {
                           'type': type
                         });
                   },
-                  child: type=='client'? Text(
-                  'PAY',
-                  style: const TextStyle(
-                    color: color2,
-                    fontSize: 20,
-                    fontFamily: 'GilroyLight',
-                    fontWeight: FontWeight.w800,
-                  ),
-                ):Icon(
-                    Icons.info_outlined,
-                    color: color1,
-                  ),
+                  child: type == 'client'
+                      ? Text(
+                          'PAY',
+                          style: const TextStyle(
+                            color: color2,
+                            fontSize: 20,
+                            fontFamily: 'GilroyLight',
+                            fontWeight: FontWeight.w800,
+                          ),
+                        )
+                      : Icon(
+                          Icons.info_outlined,
+                          color: color1,
+                        ),
                 )
               ],
             ),

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delibuddy/components/rounded_button.dart';
 import 'package:delibuddy/constants.dart';
+import 'package:delibuddy/order/referral_screen.dart';
 import 'package:delibuddy/views/chat/chat_screen.dart';
 import 'package:flutter/material.dart' hide BoxDecoration, BoxShadow;
 import 'package:flutter_inset_box_shadow/flutter_inset_box_shadow.dart';
@@ -255,7 +256,20 @@ class _OrderDescriptionState extends State<OrderDescription> {
                 ),
               ),
               SizedBox(
-                height: size.height * 0.1,
+                height: size.height * 0.04,
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, ReferralScreen.routeName);
+                },
+                child: Text(
+                  'Apply Coupon',
+                  style: GoogleFonts.sourceSansPro(
+                      fontSize: 22, color: color1, fontWeight: FontWeight.w800),
+                ),
+              ),
+              SizedBox(
+                height: size.height * 0.05,
               ),
               RoundedButton(
                 title: "Order",
@@ -264,10 +278,6 @@ class _OrderDescriptionState extends State<OrderDescription> {
                 func: () {
                   isOrdered = true;
                   addOrder();
-                  // Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //         builder: (context) => RegistrationScreen()));
                 },
               ),
             ],

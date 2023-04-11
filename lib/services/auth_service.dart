@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delibuddy/views/order_request/order_request.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,22 +13,68 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../views/home/home_screen.dart';
 
 class AuthService {
-  Future<void> signUpUser({
-    required BuildContext context,
-    required String name,
-    required String email,
-    required String password,
-  }) async {
+  Future<void> signUpUser(
+      {required BuildContext context,
+      required String name,
+      required String email,
+      required String password,
+      bool isReferral = false,
+      String referralProvided = ''}) async {
     String? errorMessage;
     final auth = FirebaseAuth.instance;
     try {
+      List<String> referralList = [];
+      //checking validity of referralCode
+      if (isReferral) {
+        final QuerySnapshot<Map<String, dynamic>> querySnapshot =
+            await FirebaseFirestore.instance.collection('users').get();
+        bool isFound = false;
+        for (var doc in querySnapshot.docs) {
+          if (doc.data()['referralCode'] == referralProvided) {
+            final mp = doc.data();
+            if (mp['referralCount'] >= 3) {
+              break;
+            }
+            mp['referralCount'] += 1;
+            String docId = mp['email'];
+            final DocumentReference documentRef =
+                FirebaseFirestore.instance.collection('users').doc(docId);
+            await documentRef.update(mp);
+            referralList.add(referralProvided);
+            isFound = true;
+            break;
+          }
+        }
+
+        if (!isFound) {
+          Fluttertoast.showToast(
+              msg: "Invalid Referral Code", backgroundColor: color1);
+          return;
+        }
+      }
+
       await auth
           .createUserWithEmailAndPassword(email: email, password: password)
           .catchError((e) {
         throw e;
       });
       final docUser = FirebaseFirestore.instance.collection('users').doc(email);
-      final emailData = {'email': email, 'name': name};
+      Random random = Random();
+      String alphabet = 'abcdefghijklmnopqrstuvwxyz';
+      String referralCode = '';
+
+      for (int i = 0; i < 6; i++) {
+        int index = random.nextInt(26);
+        referralCode += alphabet[index];
+      }
+
+      final emailData = {
+        'email': email,
+        'name': name,
+        'referralCode': referralCode.toUpperCase(),
+        'referralList': referralList,
+        'referralCount': 0
+      };
       await docUser.set(emailData);
 
       Navigator.push(context,
@@ -84,7 +131,6 @@ class AuthService {
       final DocumentSnapshot<Map<String, dynamic>> snapshot =
           await FirebaseFirestore.instance.collection('users').doc(email).get();
 
-      // Retrieve the name field from the document data
       name = snapshot.data()!['name'];
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -99,7 +145,8 @@ class AuthService {
               .doc('delivery')
               .get();
 
-      List<String> deliveryEmail = List<String>.from(deliverySnapshot.data()!['email']);
+      List<String> deliveryEmail =
+          List<String>.from(deliverySnapshot.data()!['email']);
 
       if (deliveryEmail.contains(email)) {
         prefs.setString('type', "delivery");

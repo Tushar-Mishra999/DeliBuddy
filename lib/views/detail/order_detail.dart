@@ -33,21 +33,25 @@ class _OrderDetailState extends State<OrderDetail> {
     DocumentReference ordersDoc =
         FirebaseFirestore.instance.collection('orders').doc('orders');
 
-    ordersDoc.get().then((docSnapshot) {
+    ordersDoc.get().then((docSnapshot) async {
       List<dynamic> orderList = docSnapshot.get('orders');
       for (int i = 0; i < orderList.length; i++) {
         Map<dynamic, dynamic> orderMap = orderList[i];
         if (orderMap['name'] == name && orderMap['status'] == 'success') {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setBool('isChat', false);
+          orderList.remove(orderMap);
+          ordersDoc.update({'orders': orderList});
           Fluttertoast.showToast(
               msg: "Order delivered", backgroundColor: color1);
-              Navigator.pushNamedAndRemoveUntil(context, HomeScreen.routeName, (route) => false);
+          Navigator.pushNamedAndRemoveUntil(
+              context, HomeScreen.routeName, (route) => false);
           return;
         }
       }
-      
-      Fluttertoast.showToast(
-              msg: "Order not delivered yet", backgroundColor: color1);
 
+      Fluttertoast.showToast(
+          msg: "Order not delivered yet", backgroundColor: color1);
     });
   }
 

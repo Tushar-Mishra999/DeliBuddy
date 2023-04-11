@@ -7,6 +7,8 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../profile/profile_screen.dart';
+
 class HomeScreen extends StatefulWidget {
   static const routeName = '/homescreen';
   const HomeScreen({super.key});
@@ -42,17 +44,38 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
         backgroundColor: bgcolor,
-        body:  isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(
-                      color: color1,
-                    ),
-                  )
-                :SafeArea(
-          child:  SingleChildScrollView(
-            child:Column(children: [
+        body: isLoading
+            ? const Center(
+                child: CircularProgressIndicator(
+                  color: color1,
+                ),
+              )
+            : SafeArea(
+                child: SingleChildScrollView(
+                  child: Column(children: [
                     SizedBox(
-                      height: size.height * 0.06,
+                      height: size.height * 0.01,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          const Spacer(),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                  context, ProfileScreen.routeName);
+                            },
+                            child: const Icon(
+                              Icons.person_outlined,
+                              size: 35,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: size.height * 0.02,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -88,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     )
                   ]),
-          ),
-        ));
+                ),
+              ));
   }
 }

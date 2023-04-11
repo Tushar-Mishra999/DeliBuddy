@@ -23,6 +23,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final nameController = TextEditingController();
 
   final passwordController = TextEditingController();
+  final referralController = TextEditingController();
 
   bool isLoaded = false;
 
@@ -57,6 +58,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 controller: passwordController,
                 hintText: "Enter your password",
               ),
+              CustomTextField(
+                title: "Referral",
+                controller: referralController,
+                hintText: "Enter your referral code",
+              ),
               const SizedBox(
                 height: 30,
               ),
@@ -67,11 +73,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   isLoaded = true;
                   setState(() {});
                   AuthService authService = AuthService();
-                  await authService.signUpUser(
-                      context: context,
-                      name: nameController.text,
-                      email: emailController.text,
-                      password: passwordController.text);
+                  if (referralController.text.isEmpty) {
+                    await authService.signUpUser(
+                        context: context,
+                        name: nameController.text,
+                        email: emailController.text,
+                        password: passwordController.text);
+                    isLoaded = false;
+                  } else {
+                    await authService.signUpUser(
+                        context: context,
+                        name: nameController.text,
+                        email: emailController.text,
+                        password: passwordController.text,
+                        referralProvided: referralController.text,
+                        isReferral: true);
+                  }
                   isLoaded = false;
                   setState(() {});
                 },

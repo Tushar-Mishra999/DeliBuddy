@@ -5,9 +5,10 @@ import 'package:delibuddy/views/auth/login_screen.dart';
 import 'package:delibuddy/views/chat/chat_screen.dart';
 import 'package:delibuddy/views/home/home_screen.dart';
 import 'package:delibuddy/views/onboarding_screen.dart';
-import 'package:delibuddy/views/order_place.dart';
+import 'package:delibuddy/order/order_place.dart';
 import 'package:delibuddy/views/detail/order_detail.dart';
 import 'package:delibuddy/views/order_request/order_request.dart';
+import 'package:delibuddy/views/profile/profile_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -35,8 +36,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       onGenerateRoute: (settings) => generateRoute(settings),
-      home: LoginScreen(),
-      //home: _isLoggedIn ? _type=='client'?const HomeScreen():const OrderRequest() :  OnboardingScreen(),
+      home: FirstScreen(),
     );
   }
 }
