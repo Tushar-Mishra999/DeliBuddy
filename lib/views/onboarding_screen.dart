@@ -40,7 +40,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 CarouselSlider.builder(
                   options: CarouselOptions(
                       viewportFraction: 1,
-                      height: 200,
+                      height: size.height * 0.2,
                       pageSnapping: true,
                       enableInfiniteScroll: false,
                       enlargeCenterPage: false,

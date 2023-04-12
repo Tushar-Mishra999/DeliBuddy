@@ -4,6 +4,8 @@ import 'package:delibuddy/constants.dart';
 import 'package:delibuddy/views/onboarding_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -48,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       prefs.setString('email', '');
       prefs.setBool('isLoggedIn', false);
       Navigator.pushNamedAndRemoveUntil(
-            context, OnboardingScreen.routeName, (route) => false);
+          context, OnboardingScreen.routeName, (route) => false);
     } catch (e) {
       print(e.toString());
     }
@@ -96,10 +98,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(
                   height: size.height * 0.02,
                 ),
-                Text(
-                  'Referral Code - $referralCode',
-                  style: GoogleFonts.sourceSansPro(
-                      fontSize: 25, fontWeight: FontWeight.w500),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Referral Code -',
+                      style: GoogleFonts.sourceSansPro(
+                        fontSize: 25,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SelectableText(
+                      ' $referralCode',
+                      style: GoogleFonts.sourceSansPro(
+                        fontSize: 25,
+                        fontWeight: FontWeight.w800, 
+                      ),
+                      onTap: () {
+                        Clipboard.setData(ClipboardData(text: referralCode));
+                        Fluttertoast.showToast(
+                            msg: "Referral code copied",
+                            backgroundColor: color2,
+                            textColor: Colors.white);
+                      },
+                    ),
+                  ],
                 ),
                 SizedBox(
                   height: size.height * 0.06,

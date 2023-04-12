@@ -3,11 +3,9 @@ import 'package:delibuddy/constants.dart';
 import 'package:delibuddy/views/chat/chat_message.dart';
 import 'package:delibuddy/views/chat/typing_field.dart';
 import 'package:delibuddy/views/detail/order_detail.dart';
-import 'package:delibuddy/views/onboarding_screen.dart';
 import 'package:delibuddy/views/order_request/order_request.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'dart:math';
 
 import 'package:shared_preferences/shared_preferences.dart';
 

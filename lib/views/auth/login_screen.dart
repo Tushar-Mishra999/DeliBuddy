@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:delibuddy/constants.dart';
 import 'package:delibuddy/services/auth_service.dart';
 import 'package:delibuddy/views/auth/registration_screen.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../../../components/rounded_button.dart';
 import '../../../components/textformfield.dart';
 

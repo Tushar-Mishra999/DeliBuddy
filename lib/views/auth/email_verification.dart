@@ -38,7 +38,7 @@ class _EmailVerificationState extends State<EmailVerification> {
     if (user.emailVerified) {
       timer.cancel();
       Fluttertoast.showToast(
-          msg: "Registration Successful", backgroundColor: color1);
+          msg: "Registration Successful",backgroundColor: color2,textColor: Colors.white);
       Navigator.popAndPushNamed(context, LoginScreen.routeName);
     }
   }

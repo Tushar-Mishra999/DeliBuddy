@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delibuddy/components/rounded_button.dart';
-import 'package:delibuddy/components/textformfield.dart';
 import 'package:delibuddy/constants.dart';
 import 'package:delibuddy/views/detail/otp_field.dart';
 import 'package:delibuddy/views/home/home_screen.dart';
@@ -43,7 +42,7 @@ class _OrderDetailState extends State<OrderDetail> {
           orderList.remove(orderMap);
           ordersDoc.update({'orders': orderList});
           Fluttertoast.showToast(
-              msg: "Order delivered", backgroundColor: color1);
+              msg: "Order delivered", backgroundColor: color2,textColor: Colors.white);
           Navigator.pushNamedAndRemoveUntil(
               context, HomeScreen.routeName, (route) => false);
           return;
@@ -51,7 +50,7 @@ class _OrderDetailState extends State<OrderDetail> {
       }
 
       Fluttertoast.showToast(
-          msg: "Order not delivered yet", backgroundColor: color1);
+          msg: "Order not delivered yet",backgroundColor: color2,textColor: Colors.white);
     });
   }
 

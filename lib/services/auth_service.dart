@@ -63,7 +63,7 @@ class AuthService {
 
         if (!isFound) {
           Fluttertoast.showToast(
-              msg: "Invalid Referral Code", backgroundColor: color1);
+              msg: "Invalid Referral Code", backgroundColor: color2,textColor: Colors.white);
           return;
         }
       }
@@ -123,12 +123,12 @@ class AuthService {
       Fluttertoast.showToast(
           msg: errorMessage,
           toastLength: Toast.LENGTH_LONG,
-          backgroundColor: color1);
+          backgroundColor: color2,textColor: Colors.white);
     } catch (e) {
       Fluttertoast.showToast(
           msg: 'Something went wrong, please try again',
           toastLength: Toast.LENGTH_LONG,
-          backgroundColor: color1);
+          backgroundColor: color2,textColor: Colors.white);
     }
   }
 
@@ -155,7 +155,7 @@ class AuthService {
       prefs.setString('name', name);
       prefs.setString('email', email);
       prefs.setBool('isLoggedIn', true);
-      Fluttertoast.showToast(msg: "Login Successful", backgroundColor: color1);
+      Fluttertoast.showToast(msg: "Login Successful", backgroundColor: color2,textColor: Colors.white);
 
       final DocumentSnapshot<Map<String, dynamic>> deliverySnapshot =
           await FirebaseFirestore.instance
@@ -201,12 +201,12 @@ class AuthService {
       Fluttertoast.showToast(
           msg: errorMessage,
           toastLength: Toast.LENGTH_LONG,
-          backgroundColor: color1);
+          backgroundColor: color2,textColor: Colors.white);
     } catch (e) {
       Fluttertoast.showToast(
           msg: 'Something went wrong, please try again',
           toastLength: Toast.LENGTH_LONG,
-          backgroundColor: color1);
+          backgroundColor: color2,textColor: Colors.white);
     }
   }
 }

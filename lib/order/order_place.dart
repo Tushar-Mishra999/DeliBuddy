@@ -60,7 +60,7 @@ class _OrderDescriptionState extends State<OrderDescription> {
 
     // if (now - orderTimestamp > 60000) {
     //   Fluttertoast.showToast(
-    //       msg: 'No delivery partners were available', backgroundColor: color1);
+    //       msg: 'No delivery partners were available', backgroundColor: color2,textColor: Colors.white);
     //   orders.remove(orderMap);
     //   await ordersDocument.set({
     //     'orders': orders,
@@ -69,11 +69,11 @@ class _OrderDescriptionState extends State<OrderDescription> {
     if (status == 'pending') {
       Fluttertoast.showToast(
           msg: 'Waiting for delivery partners to accept',
-          backgroundColor: color1);
+          backgroundColor: color2,textColor: Colors.white);
     } else if (status == 'reject') {
       Fluttertoast.showToast(
           msg: 'Order rejected, please try again after sometime',
-          backgroundColor: color1);
+          backgroundColor: color2,textColor: Colors.white);
       orders.remove(orderMap);
       isOrdered = false;
       await ordersDocument.set({
@@ -147,9 +147,9 @@ class _OrderDescriptionState extends State<OrderDescription> {
 
       await documentRef.update({'orders': currentOrders});
 
-      Fluttertoast.showToast(msg: 'Order has been placed successfully');
+      Fluttertoast.showToast(msg: 'Order has been placed successfully',backgroundColor: color2,textColor: Colors.white);
     } catch (e) {
-      Fluttertoast.showToast(msg: 'Error adding order to orders array: $e');
+      Fluttertoast.showToast(msg: 'Error adding order to orders array: $e',backgroundColor: color2,textColor: Colors.white);
     }
   }
 

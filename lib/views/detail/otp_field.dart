@@ -29,11 +29,11 @@ class OtpTextField extends StatefulWidget {
 }
 
 class _OtpTextFieldState extends State<OtpTextField> {
-  void updateOrderStatus(String deliveryName){
+  void updateOrderStatus(String deliveryName) {
     DocumentReference ordersDoc =
         FirebaseFirestore.instance.collection('orders').doc('orders');
 
-    ordersDoc.get().then((docSnapshot)async {
+    ordersDoc.get().then((docSnapshot) async {
       List<dynamic> orderList = docSnapshot.get('orders');
       for (int i = 0; i < orderList.length; i++) {
         Map<dynamic, dynamic> orderMap = orderList[i];
@@ -81,14 +81,18 @@ class _OtpTextFieldState extends State<OtpTextField> {
           onFieldSubmitted: (value) async {
             if (value == widget.otp) {
               Fluttertoast.showToast(
-                  msg: "OTP accepted", backgroundColor: color1);
+                  msg: "OTP accepted",
+                  backgroundColor: color2,
+                  textColor: Colors.white);
               SharedPreferences sharedPreferences =
                   await SharedPreferences.getInstance();
               String deliveryName = sharedPreferences.getString('name') ?? '';
               updateOrderStatus(deliveryName);
             } else {
               Fluttertoast.showToast(
-                  msg: "Wrong otp, please try again", backgroundColor: color1);
+                  msg: "Wrong otp, please try again",
+                  backgroundColor: color2,
+                  textColor: Colors.white);
             }
           },
           controller: widget.controller,
