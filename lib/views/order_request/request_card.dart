@@ -39,12 +39,14 @@ class RequestCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                name,
+                name.length > 25 ? name.substring(0, 12) + "..." : name,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
                 style: GoogleFonts.sourceSansPro(
                     color: bgcolor, fontSize: 24, fontWeight: FontWeight.w500),
               ),
               Text(
-                shop,
+                shop.length > 25 ? shop.substring(0, 10) + "..." : shop,
                 style: GoogleFonts.sourceSansPro(
                     color: Colors.white,
                     fontSize: 24,
@@ -101,7 +103,7 @@ class RequestCard extends StatelessWidget {
                 await FirebaseFirestore.instance
                     .collection('chats')
                     .doc("$email,$name:$deliveryEmail,$deliveryName")
-                    .set({'chats': [],'cancel':false});
+                    .set({'chats': [], 'cancel': false});
                 Navigator.pushNamed(context, ChatScreen.routeName);
                 await FirebaseFirestore.instance
                     .collection('orders')

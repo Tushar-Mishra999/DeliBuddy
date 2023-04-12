@@ -26,7 +26,7 @@ class Shop extends StatelessWidget {
       },
       child: Container(
         margin: const EdgeInsets.all(15),
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.only(left: 12, right: 12),
         width: size.width * 0.8,
         height: size.height * 0.08,
         decoration: BoxDecoration(
