@@ -5,7 +5,7 @@ import 'package:delibuddy/views/auth/login_screen.dart';
 import 'package:delibuddy/views/chat/chat_screen.dart';
 import 'package:delibuddy/views/home/home_screen.dart';
 import 'package:delibuddy/views/onboarding_screen.dart';
-import 'package:delibuddy/order/order_place.dart';
+import 'package:delibuddy/views/order/order_place.dart';
 import 'package:delibuddy/views/detail/order_detail.dart';
 import 'package:delibuddy/views/order_request/order_request.dart';
 import 'package:delibuddy/views/profile/profile_screen.dart';
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       onGenerateRoute: (settings) => generateRoute(settings),
-      home:const OnboardingScreen(),
+      home: OnboardingScreen(),
     );
   }
 }

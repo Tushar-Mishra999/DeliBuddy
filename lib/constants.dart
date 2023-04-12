@@ -9,7 +9,7 @@ const bgcolor = Color(0xffFFEACB);
 const onboardingScreen = [
   {
     'first': 'Delivery',
-    'second': " at your doorstep,made easy.",
+    'second': " at your doorstep, made easy.",
     'third':
         "Now get anything delivered to you at your hostel’s in just a few clicks from our affiliated stores and vendors"
   },

@@ -72,26 +72,36 @@ class _OrderRequestState extends State<OrderRequest> {
       builder: (context, snapshot) {
         if (snapshot.data != null) {
           List<dynamic> orderList = snapshot.data!['orders'];
-          return Container(
-            width: size.width * 0.9,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: orderList.length,
-              itemBuilder: (context, index) {
-                Map<String, dynamic> details = orderList[index];
-                return details['status'] == 'pending'
-                    ? RequestCard(
-                        size: size,
-                        name: details['name'],
-                        description: details['description'],
-                        shop: details['shop'],
-                        address: details['address'],
-                        email: details['email'],
-                      )
-                    : Container();
-              },
-            ),
-          );
+          return orderList.isEmpty
+              ? Center(
+                  child: Text(
+                    'No Orders',
+                    style: GoogleFonts.sourceSansPro(
+                        fontSize: 25,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w700),
+                  ),
+                )
+              : Container(
+                  width: size.width * 0.9,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: orderList.length,
+                    itemBuilder: (context, index) {
+                      Map<String, dynamic> details = orderList[index];
+                      return details['status'] == 'pending'
+                          ? RequestCard(
+                              size: size,
+                              name: details['name'],
+                              description: details['description'],
+                              shop: details['shop'],
+                              address: details['address'],
+                              email: details['email'],
+                            )
+                          : Container();
+                    },
+                  ),
+                );
         } else {
           return Container();
         }

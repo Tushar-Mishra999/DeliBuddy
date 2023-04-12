@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delibuddy/constants.dart';
+import 'package:delibuddy/views/order/order_place.dart';
 import 'package:delibuddy/views/chat/chat_screen.dart';
 import 'package:delibuddy/views/home/home_screen.dart';
 import 'package:delibuddy/views/onboarding_screen.dart';
@@ -28,15 +30,38 @@ class _FirstScreenState extends State<FirstScreen> {
   void checkLoginStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-    bool isChat = prefs.getBool('isChat') ?? false;
+    bool isChat = false;
+    bool isOrder = false;
     String type = prefs.getString('type') ?? 'client';
+    String name = prefs.getString('name') ?? '';
+    final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+        await FirebaseFirestore.instance
+            .collection('orders')
+            .doc('orders')
+            .get();
+    final List<dynamic> ordersArray = documentSnapshot.data()!['orders'];
+
+    for (final order in ordersArray) {
+      if (order['name'] == name || order['deliveryName'] == name) {
+        if (order['status'] == 'accepted') {
+          isChat = true;
+        } else {
+          isOrder = true;
+        }
+        break;
+      }
+    }
+
     _timer = Timer(const Duration(seconds: 1), () {
       if (isLoggedIn) {
-        if(isChat){
-           Navigator.pushNamedAndRemoveUntil(
+        if (isChat) {
+          Navigator.pushNamedAndRemoveUntil(
               context, ChatScreen.routeName, (route) => false);
-        }
-        else if (type == 'client') {
+        } else if (isOrder) {
+          String shop = prefs.getString('shop')??'';
+          Navigator.pushNamedAndRemoveUntil(context,
+              OrderDescription.routeName,arguments: {'shopName':shop}, (route) => false);
+        } else if (type == 'client') {
           Navigator.pushNamedAndRemoveUntil(
               context, HomeScreen.routeName, (route) => false);
         } else {

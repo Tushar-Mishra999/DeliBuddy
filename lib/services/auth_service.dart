@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:delibuddy/views/order/order_place.dart';
 import 'package:delibuddy/views/order_request/order_request.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:delibuddy/views/auth/email_verification.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../views/chat/chat_screen.dart';
 import '../views/home/home_screen.dart';
 
 class AuthService {
@@ -63,7 +65,9 @@ class AuthService {
 
         if (!isFound) {
           Fluttertoast.showToast(
-              msg: "Invalid Referral Code", backgroundColor: color2,textColor: Colors.white);
+              msg: "Invalid Referral Code",
+              backgroundColor: color2,
+              textColor: Colors.white);
           return;
         }
       }
@@ -84,12 +88,14 @@ class AuthService {
         int index2 = random.nextInt(26);
         deliBuddyCoupon += alphabet[index2];
       }
-      referralList.add(deliBuddyCoupon.toUpperCase()); //Delibuddy's coupon to every new user
+      referralList.add(
+          deliBuddyCoupon.toUpperCase()); //Delibuddy's coupon to every new user
 
       final emailData = {
         'email': email,
         'name': name,
-        'referralCode': referralCode.toUpperCase(),// X gets a referral code, that he can give to others to redeem
+        'referralCode': referralCode
+            .toUpperCase(), // X gets a referral code, that he can give to others to redeem
         'referralList': referralList,
         'referralCount': 0
       };
@@ -123,12 +129,14 @@ class AuthService {
       Fluttertoast.showToast(
           msg: errorMessage,
           toastLength: Toast.LENGTH_LONG,
-          backgroundColor: color2,textColor: Colors.white);
+          backgroundColor: color2,
+          textColor: Colors.white);
     } catch (e) {
       Fluttertoast.showToast(
           msg: 'Something went wrong, please try again',
           toastLength: Toast.LENGTH_LONG,
-          backgroundColor: color2,textColor: Colors.white);
+          backgroundColor: color2,
+          textColor: Colors.white);
     }
   }
 
@@ -155,7 +163,10 @@ class AuthService {
       prefs.setString('name', name);
       prefs.setString('email', email);
       prefs.setBool('isLoggedIn', true);
-      Fluttertoast.showToast(msg: "Login Successful", backgroundColor: color2,textColor: Colors.white);
+      Fluttertoast.showToast(
+          msg: "Login Successful",
+          backgroundColor: color2,
+          textColor: Colors.white);
 
       final DocumentSnapshot<Map<String, dynamic>> deliverySnapshot =
           await FirebaseFirestore.instance
@@ -166,12 +177,45 @@ class AuthService {
       List<String> deliveryEmail =
           List<String>.from(deliverySnapshot.data()!['email']);
 
+      bool isChat = false;
+      bool isOrder = false;
+      final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+          await FirebaseFirestore.instance
+              .collection('orders')
+              .doc('orders')
+              .get();
+      final List<dynamic> ordersArray = documentSnapshot.data()!['orders'];
+
+      for (final order in ordersArray) {
+        if (order['name'] == name || order['deliveryName'] == name) {
+          if (order['status'] == 'accepted') {
+            isChat = true;
+          } else {
+            isOrder = true;
+          }
+          break;
+        }
+      }
+
       if (deliveryEmail.contains(email)) {
         prefs.setString('type', "delivery");
+      } else {
+        prefs.setString('type', 'client');
+      }
+
+      if (isChat) {
+        Navigator.pushNamedAndRemoveUntil(
+            context, ChatScreen.routeName, (route) => false);
+      } 
+       else if (isOrder) {
+          String shop = prefs.getString('shop')??'';
+          Navigator.pushNamedAndRemoveUntil(context,
+              OrderDescription.routeName,arguments: {'shopName':shop}, (route) => false);
+        }
+      else if (deliveryEmail.contains(email)) {
         Navigator.pushNamedAndRemoveUntil(
             context, OrderRequest.routeName, (route) => false);
       } else {
-        prefs.setString('type', "client");
         Navigator.pushNamedAndRemoveUntil(
             context, HomeScreen.routeName, (route) => false);
       }
@@ -201,12 +245,14 @@ class AuthService {
       Fluttertoast.showToast(
           msg: errorMessage,
           toastLength: Toast.LENGTH_LONG,
-          backgroundColor: color2,textColor: Colors.white);
+          backgroundColor: color2,
+          textColor: Colors.white);
     } catch (e) {
       Fluttertoast.showToast(
           msg: 'Something went wrong, please try again',
           toastLength: Toast.LENGTH_LONG,
-          backgroundColor: color2,textColor: Colors.white);
+          backgroundColor: color2,
+          textColor: Colors.white);
     }
   }
 }

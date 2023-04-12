@@ -29,18 +29,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            SizedBox(
+              height: size.height * 0.1,
+            ),
             Center(
               child: Image.asset(
                 'assets/logo.png',
-                height: size.height * 0.5,
+                height: size.height * 0.25,
               ),
+            ),
+            SizedBox(
+              height: size.height * 0.06,
             ),
             Column(
               children: [
                 CarouselSlider.builder(
                   options: CarouselOptions(
                       viewportFraction: 1,
-                      height: size.height * 0.2,
+                      height: size.height * 0.24,
                       pageSnapping: true,
                       enableInfiniteScroll: false,
                       enlargeCenterPage: false,
@@ -79,7 +85,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           ),
                         ),
                         SizedBox(
-                          height: size.height * 0.03,
+                          height: size.height * 0.02,
                         ),
                         Container(
                           height: size.height * 0.1,

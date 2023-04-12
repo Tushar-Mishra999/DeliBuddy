@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delibuddy/components/rounded_button.dart';
 import 'package:delibuddy/constants.dart';
-import 'package:delibuddy/order/referral_screen.dart';
+import 'package:delibuddy/views/order/referral_screen.dart';
 import 'package:delibuddy/views/chat/chat_screen.dart';
 import 'package:flutter/material.dart' hide BoxDecoration, BoxShadow;
 import 'package:flutter_inset_box_shadow/flutter_inset_box_shadow.dart';
@@ -23,7 +23,6 @@ class OrderDescription extends StatefulWidget {
 class _OrderDescriptionState extends State<OrderDescription> {
   TextEditingController descriptionController = TextEditingController();
   TextEditingController addressController = TextEditingController();
-  bool isOrdered = false;
   late Timer _timer;
   String referralCode = '';
   @override
@@ -41,18 +40,20 @@ class _OrderDescriptionState extends State<OrderDescription> {
   }
 
   void statusChecking() async {
-    if (!isOrdered) {
-      return;
-    }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('shop', widget.shopName);
     final DocumentReference ordersDocument =
         FirebaseFirestore.instance.collection('orders').doc('orders');
     final DocumentSnapshot<dynamic> orderDoc = await ordersDocument.get();
 
     List<dynamic> orders = orderDoc.data()!['orders'];
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     String? email = prefs.getString('email');
-    Map<String, dynamic> orderMap = orders
+    Map<String, dynamic>? orderMap = orders
         .firstWhere((order) => order['email'] == email, orElse: () => null);
+   
+    if (orderMap == null) {
+      return;
+    }
 
     String status = orderMap['status'];
     final orderTimestamp = orderMap['timestamp'].millisecondsSinceEpoch;
@@ -69,13 +70,14 @@ class _OrderDescriptionState extends State<OrderDescription> {
     if (status == 'pending') {
       Fluttertoast.showToast(
           msg: 'Waiting for delivery partners to accept',
-          backgroundColor: color2,textColor: Colors.white);
+          backgroundColor: color2,
+          textColor: Colors.white);
     } else if (status == 'reject') {
       Fluttertoast.showToast(
           msg: 'Order rejected, please try again after sometime',
-          backgroundColor: color2,textColor: Colors.white);
+          backgroundColor: color2,
+          textColor: Colors.white);
       orders.remove(orderMap);
-      isOrdered = false;
       await ordersDocument.set({
         'orders': orders,
       });
@@ -89,7 +91,6 @@ class _OrderDescriptionState extends State<OrderDescription> {
               .collection('orders')
               .doc('orders')
               .get();
-      isOrdered = false;
 
       Map<String, dynamic> mp = {};
       List<dynamic> orders = documentSnapshot.data()!['orders'];
@@ -147,9 +148,15 @@ class _OrderDescriptionState extends State<OrderDescription> {
 
       await documentRef.update({'orders': currentOrders});
 
-      Fluttertoast.showToast(msg: 'Order has been placed successfully',backgroundColor: color2,textColor: Colors.white);
+      Fluttertoast.showToast(
+          msg: 'Order has been placed successfully',
+          backgroundColor: color2,
+          textColor: Colors.white);
     } catch (e) {
-      Fluttertoast.showToast(msg: 'Error adding order to orders array: $e',backgroundColor: color2,textColor: Colors.white);
+      Fluttertoast.showToast(
+          msg: 'Error adding order to orders array: $e',
+          backgroundColor: color2,
+          textColor: Colors.white);
     }
   }
 
@@ -301,7 +308,6 @@ class _OrderDescriptionState extends State<OrderDescription> {
                 size: size,
                 second: false,
                 func: () {
-                  isOrdered = true;
                   addOrder();
                 },
               ),
