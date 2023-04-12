@@ -100,17 +100,17 @@ class _OrderDescriptionState extends State<OrderDescription> {
         }
       }
 
-      if(referralCode.isNotEmpty&&referralCode!='null'){
+      if (referralCode.isNotEmpty && referralCode != 'null') {
         final DocumentSnapshot documentSnapshot2 = await FirebaseFirestore
-          .instance
-          .collection('users')
-          .doc(clientEmail)
-          .get();
-      List<dynamic> referralList = documentSnapshot2['referralList'];
-      referralList.remove(referralCode);
-      DocumentReference ordersDoc =
-          FirebaseFirestore.instance.collection('users').doc(clientEmail);
-      ordersDoc.update({'referralList': referralList});
+            .instance
+            .collection('users')
+            .doc(clientEmail)
+            .get();
+        List<dynamic> referralList = documentSnapshot2['referralList'];
+        referralList.remove(referralCode);
+        DocumentReference ordersDoc =
+            FirebaseFirestore.instance.collection('users').doc(clientEmail);
+        ordersDoc.update({'referralList': referralList});
       }
 
       Navigator.popAndPushNamed(context, ChatScreen.routeName);
@@ -139,7 +139,7 @@ class _OrderDescriptionState extends State<OrderDescription> {
         'shop': widget.shopName,
         'status': 'pending',
         'isReferral':
-            referralCode.isNotEmpty&&referralCode!='null'? true : false,
+            referralCode.isNotEmpty && referralCode != 'null' ? true : false,
         'timestamp': Timestamp.now()
       };
 
@@ -279,6 +279,12 @@ class _OrderDescriptionState extends State<OrderDescription> {
                   Navigator.pushNamed(context, ReferralScreen.routeName)
                       .then((value) {
                     referralCode = value.toString();
+                    if (referralCode.isNotEmpty && referralCode != 'null') {
+                      Fluttertoast.showToast(
+                          msg: "Coupon applied successfully",
+                          backgroundColor: color2,
+                          textColor: Colors.white);
+                    }
                   });
                 },
                 child: Text(

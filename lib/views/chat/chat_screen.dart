@@ -4,11 +4,14 @@ import 'package:delibuddy/views/chat/chat_message.dart';
 import 'package:delibuddy/views/chat/typing_field.dart';
 import 'package:delibuddy/views/detail/order_detail.dart';
 import 'package:delibuddy/views/onboarding_screen.dart';
+import 'package:delibuddy/views/order_request/order_request.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:math';
 
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../home/home_screen.dart';
 
 class ChatScreen extends StatefulWidget {
   static const routeName = '/chat-screen';
@@ -102,10 +105,24 @@ class _ChatScreenState extends State<ChatScreen> {
           chatList = List.from(chatList.reversed);
           bool isCancel = snapshot.data!['cancel'];
           if (isCancel) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              Navigator.pushNamedAndRemoveUntil(
-                  context, OnboardingScreen.routeName, (route) => false);
-            });
+            Fluttertoast.showToast(
+                msg: "Order has been cancelled",
+                backgroundColor: color2,
+                textColor: Colors.white);
+            
+            if (type == 'delivery') {
+              WidgetsBinding.instance.addPostFrameCallback((_) async{
+                await Future.delayed(const Duration(seconds: 1));
+                Navigator.pushNamedAndRemoveUntil(
+                    context, OrderRequest.routeName, (route) => false);
+              });
+            } else {
+              WidgetsBinding.instance.addPostFrameCallback((_)async{
+                await Future.delayed(const Duration(seconds: 1));
+                Navigator.pushNamedAndRemoveUntil(
+                    context, HomeScreen.routeName, (route) => false);
+              });
+            }
           }
           return Expanded(
             child: ListView.builder(

@@ -27,7 +27,7 @@ class CouponCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                referralCode,
+                "FREEDELIVERY",
                 style: GoogleFonts.sourceSansPro(
                     color: bgcolor, fontSize: 24, fontWeight: FontWeight.w500),
               ),
@@ -56,7 +56,7 @@ class CouponCard extends StatelessWidget {
                 Navigator.pop(context, referralCode);
               },
               child: Container(
-                margin: EdgeInsets.only(bottom: 5),
+                margin: const EdgeInsets.only(bottom: 5),
                 decoration: BoxDecoration(
                     border: Border.all(color: color1, width: 3),
                     color: color1,

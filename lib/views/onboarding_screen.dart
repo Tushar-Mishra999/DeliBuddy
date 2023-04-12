@@ -10,7 +10,7 @@ import '../../components/rounded_button.dart';
 
 class OnboardingScreen extends StatefulWidget {
   static const routeName = '/onboarding-screen';
-  OnboardingScreen({Key? key}) : super(key: key);
+  const OnboardingScreen({Key? key}) : super(key: key);
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();

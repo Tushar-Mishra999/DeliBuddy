@@ -55,7 +55,7 @@ class AuthService {
             await documentRef.update(mp);
 
             //if A refers B, B gets a referral coupon to redeem later
-            referralList.add(referralProvided);
+            referralList.add(referralProvided.toUpperCase());
             isFound = true;
             break;
           }
@@ -84,7 +84,7 @@ class AuthService {
         int index2 = random.nextInt(26);
         deliBuddyCoupon += alphabet[index2];
       }
-      referralList.add(deliBuddyCoupon); //Delibuddy's coupon to every new user
+      referralList.add(deliBuddyCoupon.toUpperCase()); //Delibuddy's coupon to every new user
 
       final emailData = {
         'email': email,
