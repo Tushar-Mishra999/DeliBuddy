@@ -83,23 +83,22 @@ class _OrderDescriptionState extends State<OrderDescription> {
       });
     } else if (status == 'accepted') {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? clientName = prefs.getString('name');
+      //String? clientName = prefs.getString('name');
       String? clientEmail = prefs.getString('email');
-      String? type = prefs.getString('type');
-      final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
-          await FirebaseFirestore.instance
-              .collection('orders')
-              .doc('orders')
-              .get();
+      // final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+      //     await FirebaseFirestore.instance
+      //         .collection('orders')
+      //         .doc('orders')
+      //         .get();
 
-      Map<String, dynamic> mp = {};
-      List<dynamic> orders = documentSnapshot.data()!['orders'];
-      for (var order in orders) {
-        if (order['name'] == clientName) {
-          mp = order;
-          break;
-        }
-      }
+      // Map<String, dynamic> mp = {};
+      // List<dynamic> orders = documentSnapshot.data()!['orders'];
+      // for (var order in orders) {
+      //   if (order['name'] == clientName) {
+      //     mp = order;
+      //     break;
+      //   }
+      // }
 
       if (referralCode.isNotEmpty && referralCode != 'null') {
         final DocumentSnapshot documentSnapshot2 = await FirebaseFirestore

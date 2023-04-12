@@ -39,6 +39,7 @@ class _TypingFieldState extends State<TypingField> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       width: widget.size.width * 0.9,
@@ -84,10 +85,8 @@ class _TypingFieldState extends State<TypingField> {
                 }
               }
             },
-            child: const Icon(
-              Icons.attach_file,
-              color: color1,
-            ),
+            child:
+                Icon(Icons.attach_file, color: color1, size: size.width * 0.06),
           ),
         ],
       ),

@@ -51,7 +51,7 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
     case EmailVerification.routeName:
       return MaterialPageRoute(
         settings: routeSettings,
-        builder: (_) => EmailVerification(),
+        builder: (_) => const EmailVerification(),
       );
     case OrderDescription.routeName:
       Map<String, dynamic> arguments =
@@ -63,16 +63,9 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
         ),
       );
     case ChatScreen.routeName:
-      // Map<String, dynamic> arguments =
-      //     routeSettings.arguments as Map<String, dynamic>;
       return MaterialPageRoute(
         settings: routeSettings,
-        builder: (_) => ChatScreen(
-            // name:arguments['name'],
-            // type: arguments['type'],
-            // chatRoomId: arguments['chatRoomId'],
-            // otp:arguments['otp'],
-            // description: arguments['description'],
+        builder: (_) => const ChatScreen(
             ),
       );
     case OrderDetail.routeName:

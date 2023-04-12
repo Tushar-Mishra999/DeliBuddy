@@ -20,6 +20,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   bool isLoading = true;
+  bool firstTime = true;
   String otp = '';
   String chatRoomId = '';
   String type = '';
@@ -107,18 +108,20 @@ class _ChatScreenState extends State<ChatScreen> {
                 msg: "Order has been cancelled",
                 backgroundColor: color2,
                 textColor: Colors.white);
-            
+
             if (type == 'delivery') {
-              WidgetsBinding.instance.addPostFrameCallback((_) async{
+              WidgetsBinding.instance.addPostFrameCallback((_) async {
                 await Future.delayed(const Duration(seconds: 1));
-                Navigator.pushNamedAndRemoveUntil(
-                    context, OrderRequest.routeName, (route) => false);
+                Navigator.popAndPushNamed(context, OrderRequest.routeName);
               });
             } else {
-              WidgetsBinding.instance.addPostFrameCallback((_)async{
+              WidgetsBinding.instance.addPostFrameCallback((_) async {
                 await Future.delayed(const Duration(seconds: 1));
-                Navigator.pushNamedAndRemoveUntil(
-                    context, HomeScreen.routeName, (route) => false);
+                DocumentReference docRef = await FirebaseFirestore.instance
+                    .collection('chats')
+                    .doc(chatRoomId);
+                await docRef.update({'cancel': false});
+                Navigator.popAndPushNamed(context, HomeScreen.routeName);
               });
             }
           }
@@ -206,9 +209,6 @@ class _ChatScreenState extends State<ChatScreen> {
                     DocumentReference docRef = await FirebaseFirestore.instance
                         .collection('chats')
                         .doc(chatRoomId);
-                    SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    prefs.setBool('isChat', false);
                     DocumentReference ordersDoc = FirebaseFirestore.instance
                         .collection('orders')
                         .doc('orders');
