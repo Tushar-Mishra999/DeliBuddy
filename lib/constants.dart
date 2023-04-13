@@ -42,5 +42,9 @@ const upiId = {
    'Sarthak Singhania': {
     'image': 'assets/sarthak.jpeg',
     'id': '8368472801@paytm',
+  },
+  'Parv Haria':{
+    'image':'assets/parv.jpeg',
+    'id':'7303070301@paytm'
   }
 };

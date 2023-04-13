@@ -32,34 +32,33 @@ class RequestCard extends StatelessWidget {
           BoxDecoration(color: color2, borderRadius: BorderRadius.circular(10)),
       margin: const EdgeInsets.all(10),
       width: size.width * 0.8,
-      child: Column(children: [
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Padding(
           padding: const EdgeInsets.only(top: 8.0, left: 12, right: 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                name.length > 25 ? name.substring(0, 12) + "..." : name,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-                style: GoogleFonts.sourceSansPro(
-                    color: bgcolor, fontSize: 24, fontWeight: FontWeight.w500),
-              ),
-              Text(
-                shop.length > 25 ? shop.substring(0, 10) + "..." : shop,
-                style: GoogleFonts.sourceSansPro(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w500),
-              ),
-            ],
+          child: Text(
+            shop.length > 30 ? name.substring(0, 12) + "..." : name,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+            textAlign: TextAlign.left,
+            style: GoogleFonts.sourceSansPro(
+                color: bgcolor, fontSize: 24, fontWeight: FontWeight.w500),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0, left: 12, right: 12),
+          child: Text(
+            name.length > 30 ? shop.substring(0, 10) + "..." : shop,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+            style: GoogleFonts.sourceSansPro(
+                color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500),
           ),
         ),
         Container(
           width: size.width * 1,
           padding: const EdgeInsets.only(top: 12.0, left: 12, right: 12),
           child: Text(
-            description,
+            "Description: " + description,
             textAlign: TextAlign.left,
             style: GoogleFonts.sourceSansPro(
                 color: Colors.white, fontSize: 17, fontWeight: FontWeight.w500),
@@ -69,7 +68,7 @@ class RequestCard extends StatelessWidget {
           width: size.width * 1,
           padding: const EdgeInsets.all(12.0),
           child: Text(
-            address,
+            "Address: " + address,
             textAlign: TextAlign.left,
             style: GoogleFonts.sourceSansPro(
                 color: Colors.white, fontSize: 17, fontWeight: FontWeight.w500),

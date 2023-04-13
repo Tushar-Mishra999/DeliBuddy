@@ -71,7 +71,7 @@ class _TypingFieldState extends State<TypingField> {
                       TextStyle(color: Color.fromARGB(255, 176, 176, 176))),
             ),
           ),
-          Spacer(),
+          const Spacer(),
           GestureDetector(
             onTap: () async {
               widget.func();
