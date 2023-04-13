@@ -59,15 +59,15 @@ class _OrderDescriptionState extends State<OrderDescription> {
     final orderTimestamp = orderMap['timestamp'].millisecondsSinceEpoch;
     final now = DateTime.now().millisecondsSinceEpoch;
 
-    // if (now - orderTimestamp > 60000) {
-    //   Fluttertoast.showToast(
-    //       msg: 'No delivery partners were available', backgroundColor: color2,textColor: Colors.white);
-    //   orders.remove(orderMap);
-    //   await ordersDocument.set({
-    //     'orders': orders,
-    //   });
-    // } else
-    if (status == 'pending') {
+    if (now - orderTimestamp > 60000) {
+      Fluttertoast.showToast(
+          msg: 'No delivery partners were available', backgroundColor: color2,textColor: Colors.white);
+      orders.remove(orderMap);
+      await ordersDocument.set({
+        'orders': orders,
+      });
+    }
+   else if (status == 'pending') {
       Fluttertoast.showToast(
           msg: 'Waiting for delivery partners to accept',
           backgroundColor: color2,
@@ -83,23 +83,7 @@ class _OrderDescriptionState extends State<OrderDescription> {
       });
     } else if (status == 'accepted') {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      //String? clientName = prefs.getString('name');
       String? clientEmail = prefs.getString('email');
-      // final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
-      //     await FirebaseFirestore.instance
-      //         .collection('orders')
-      //         .doc('orders')
-      //         .get();
-
-      // Map<String, dynamic> mp = {};
-      // List<dynamic> orders = documentSnapshot.data()!['orders'];
-      // for (var order in orders) {
-      //   if (order['name'] == clientName) {
-      //     mp = order;
-      //     break;
-      //   }
-      // }
-
       if (referralCode.isNotEmpty && referralCode != 'null') {
         final DocumentSnapshot documentSnapshot2 = await FirebaseFirestore
             .instance

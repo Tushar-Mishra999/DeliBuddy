@@ -62,8 +62,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         AuthService authService = AuthService();
                         await authService.signInUser(
                             context: context,
-                            email: emailController.text,
-                            password: passwordController.text);
+                            email: emailController.text.trimLeft().trimRight(),
+                            password: passwordController.text.trimLeft().trimRight());
                         isLoaded = false;
                         setState(() {});
                       },

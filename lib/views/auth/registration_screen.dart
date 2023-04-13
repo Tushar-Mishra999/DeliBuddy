@@ -76,9 +76,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   if (referralController.text.isEmpty) {
                     await authService.signUpUser(
                         context: context,
-                        name: nameController.text,
-                        email: emailController.text,
-                        password: passwordController.text);
+                        name: nameController.text.trimLeft().trimRight(),
+                        email: emailController.text.trimLeft().trimRight(),
+                        password: passwordController.text.trimLeft().trimRight());
                     isLoaded = false;
                   } else {
                     await authService.signUpUser(

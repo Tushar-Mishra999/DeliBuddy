@@ -40,9 +40,9 @@ class _OrderRequestState extends State<OrderRequest> {
         .collection('orders')
         .doc('orders')
         .snapshots();
-    // Timer.periodic(const Duration(seconds: 30), (timer) {
-    //   deleteOldOrders();
-    // });
+    Timer.periodic(const Duration(seconds: 30), (timer) {
+      deleteOldOrders();
+    });
   }
 
   Future<void> deleteOldOrders() async {
