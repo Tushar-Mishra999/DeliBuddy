@@ -25,3 +25,22 @@ const onboardingScreen = [
         "Get access to all the food joints, convenience stores, medical stores at Shiv Nadar Institute of Eminence."
   },
 ];
+
+const upiId = {
+  'Siddharth Sahu': {
+    'image': 'assets/siddharth.jpeg',
+    'id': "siddharth.sahu2605@oksbi",
+  },
+  'Srikant Tripathi': {
+    'image': 'assets/srikant.jpeg',
+    'id': '885195966@paytm',
+  },
+  'Tushar Mishra': {
+    'image': 'assets/tushar.jpeg',
+    'id': '9958904763@paytm',
+  },
+   'Sarthak Singhania': {
+    'image': 'assets/sarthak.jpeg',
+    'id': '8368472801@paytm',
+  }
+};

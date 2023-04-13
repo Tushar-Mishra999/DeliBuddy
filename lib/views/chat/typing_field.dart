@@ -52,7 +52,7 @@ class _TypingFieldState extends State<TypingField> {
       child: Row(
         children: [
           Container(
-            width: widget.size.width * 0.75,
+            width: size.width * 0.6,
             child: TextField(
               controller: widget.textController,
               onSubmitted: (value) {
@@ -71,6 +71,15 @@ class _TypingFieldState extends State<TypingField> {
                       TextStyle(color: Color.fromARGB(255, 176, 176, 176))),
             ),
           ),
+          Spacer(),
+          GestureDetector(
+            onTap: () async {
+              widget.func();
+            },
+            child: Icon(Icons.send_rounded,
+                color: color1, size: size.width * 0.06),
+          ),
+          SizedBox(width: size.width * 0.05),
           GestureDetector(
             onTap: () async {
               final file = await pickImage();
@@ -88,6 +97,7 @@ class _TypingFieldState extends State<TypingField> {
             child:
                 Icon(Icons.attach_file, color: color1, size: size.width * 0.06),
           ),
+          SizedBox(width: size.width * 0.02),
         ],
       ),
     );

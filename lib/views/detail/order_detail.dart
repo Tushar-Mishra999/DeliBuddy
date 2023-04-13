@@ -4,6 +4,7 @@ import 'package:delibuddy/constants.dart';
 import 'package:delibuddy/views/detail/otp_field.dart';
 import 'package:delibuddy/views/home/home_screen.dart';
 import 'package:flutter/material.dart' hide BoxDecoration, BoxShadow;
+import 'package:flutter/services.dart';
 import 'package:flutter_inset_box_shadow/flutter_inset_box_shadow.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,11 +17,14 @@ class OrderDetail extends StatefulWidget {
     required this.otp,
     required this.description,
     required this.type,
+    required this.chatRoomId,
+    this.deliveryName = '',
   });
   final String otp;
   final String description;
   final String type;
-
+  final String deliveryName;
+  final String chatRoomId;
   @override
   State<OrderDetail> createState() => _OrderDetailState();
 }
@@ -38,11 +42,16 @@ class _OrderDetailState extends State<OrderDetail> {
         Map<dynamic, dynamic> orderMap = orderList[i];
         if (orderMap['name'] == name && orderMap['status'] == 'success') {
           SharedPreferences prefs = await SharedPreferences.getInstance();
-          prefs.setBool('isChat', false);
           orderList.remove(orderMap);
           ordersDoc.update({'orders': orderList});
+          DocumentReference docRef = await FirebaseFirestore.instance
+              .collection('chats')
+              .doc(widget.chatRoomId);
+          await docRef.update({'cancel': false, 'chats': []});
           Fluttertoast.showToast(
-              msg: "Order delivered", backgroundColor: color2,textColor: Colors.white);
+              msg: "Order delivered",
+              backgroundColor: color2,
+              textColor: Colors.white);
           Navigator.pushNamedAndRemoveUntil(
               context, HomeScreen.routeName, (route) => false);
           return;
@@ -50,7 +59,9 @@ class _OrderDetailState extends State<OrderDetail> {
       }
 
       Fluttertoast.showToast(
-          msg: "Order not delivered yet",backgroundColor: color2,textColor: Colors.white);
+          msg: "Order not delivered yet",
+          backgroundColor: color2,
+          textColor: Colors.white);
     });
   }
 
@@ -61,145 +72,165 @@ class _OrderDetailState extends State<OrderDetail> {
       backgroundColor: bgcolor,
       resizeToAvoidBottomInset: false,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: size.height * 0.1,
-              ),
-              widget.type == 'client'
-                  ? Row(
-                      children: [
-                        SizedBox(
-                          width: size.width * 0.05,
-                        ),
-                        Text(
-                          'OTP: ',
-                          style: GoogleFonts.sourceSansPro(
-                              fontSize: 25,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w700),
-                        ),
-                        Text(
-                          widget.otp,
-                          style: GoogleFonts.sourceSansPro(
-                              fontSize: 25,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500),
-                        ),
-                      ],
-                    )
-                  : Container(),
-              SizedBox(
-                height: size.height * 0.02,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: size.width * 0.05,
-                  ),
-                  Text(
-                    'Order Detail',
-                    style: GoogleFonts.sourceSansPro(
-                        fontSize: 25,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w700),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: size.height * 0.04,
-              ),
-              Container(
-                width: size.width * 0.8,
-                decoration: BoxDecoration(
-                  color: bgcolor,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 10,
-                      offset: Offset(0, 0),
-                      inset: true,
-                    ),
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.7),
-                      blurRadius: 10,
-                      offset: Offset(4, 4),
-                      inset: true,
-                    ),
-                  ],
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: size.height * 0.1,
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Text(
-                    widget.description,
-                    style: GoogleFonts.sourceSansPro(
-                        fontSize: 20,
-                        color: color2,
-                        fontWeight: FontWeight.w500),
-                  ),
-                ),
-              ),
-              widget.type == 'delivery'
-                  ? OtpTextField(
-                      otp: widget.otp,
-                      controller: otpController,
-                      hintText: "Enter otp",
-                      title: "")
-                  : Container(),
-              SizedBox(
-                height: size.height * 0.02,
-              ),
-              widget.type == 'client'
-                  ? Column(children: [
-                      Container(
-                        width: size.width * 0.8,
-                        height: size.height * 0.4,
-                        child: Image.asset(
-                          'assets/qr.png',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                widget.type == 'client'
+                    ? Row(
                         children: [
+                          SizedBox(
+                            width: size.width * 0.05,
+                          ),
                           Text(
-                            'UPI ID: 9958904763@sidplex ',
+                            'OTP: ',
                             style: GoogleFonts.sourceSansPro(
-                                fontSize: 18,
+                                fontSize: 25,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w700),
+                          ),
+                          Text(
+                            widget.otp,
+                            style: GoogleFonts.sourceSansPro(
+                                fontSize: 25,
                                 color: Colors.black,
                                 fontWeight: FontWeight.w500),
                           ),
                         ],
+                      )
+                    : Container(),
+                SizedBox(
+                  height: size.height * 0.02,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: size.width * 0.05,
+                    ),
+                    Text(
+                      'Order Detail',
+                      style: GoogleFonts.sourceSansPro(
+                          fontSize: 25,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w700),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: size.height * 0.04,
+                ),
+                Container(
+                  width: size.width * 0.8,
+                  decoration: BoxDecoration(
+                    color: bgcolor,
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 10,
+                        offset: Offset(0, 0),
+                        inset: true,
                       ),
-                    ])
-                  : Container(),
-              SizedBox(
-                height: size.height * 0.02,
-              ),
-              widget.type == 'client'
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        RoundedButton(
-                            title: "Order Received",
-                            size: size,
-                            func: () async {
-                              SharedPreferences sharedPreferences =
-                                  await SharedPreferences.getInstance();
-                              String name =
-                                  sharedPreferences.getString('name') ?? '';
-                              checkOrderDelivery(name);
-                            },
-                            second: false),
-                      ],
-                    )
-                  : Container()
-            ],
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.7),
+                        blurRadius: 10,
+                        offset: Offset(4, 4),
+                        inset: true,
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Text(
+                      widget.description,
+                      style: GoogleFonts.sourceSansPro(
+                          fontSize: 20,
+                          color: color2,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                ),
+                widget.type == 'delivery'
+                    ? OtpTextField(
+                        otp: widget.otp,
+                        controller: otpController,
+                        hintText: "Enter otp",
+                        title: "")
+                    : Container(),
+                SizedBox(
+                  height: size.height * 0.02,
+                ),
+                widget.type == 'client'
+                    ? Column(children: [
+                        Container(
+                          width: size.width * 0.8,
+                          height: size.height * 0.4,
+                          child: Image.asset(
+                            upiId[widget.deliveryName]!['image']!,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.height * 0.03,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'UPI ID: ',
+                              style: GoogleFonts.sourceSansPro(
+                                  fontSize: 18,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            SelectableText(
+                              upiId[widget.deliveryName]!['id']!,
+                              style: GoogleFonts.sourceSansPro(
+                                  fontSize: 18,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w500),
+                              onTap: () {
+                                Clipboard.setData(ClipboardData(
+                                    text: upiId[widget.deliveryName]!['id']));
+                                Fluttertoast.showToast(
+                                    msg: "UPI Id copied",
+                                    backgroundColor: color2,
+                                    textColor: Colors.white);
+                              },
+                            )
+                          ],
+                        ),
+                      ])
+                    : Container(),
+                SizedBox(
+                  height: size.height * 0.02,
+                ),
+                widget.type == 'client'
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          RoundedButton(
+                              title: "Order Received",
+                              size: size,
+                              func: () async {
+                                SharedPreferences sharedPreferences =
+                                    await SharedPreferences.getInstance();
+                                String name =
+                                    sharedPreferences.getString('name') ?? '';
+                                checkOrderDelivery(name);
+                              },
+                              second: false),
+                        ],
+                      )
+                    : Container()
+              ],
+            ),
           ),
         ),
       ),

@@ -74,6 +74,8 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
       return MaterialPageRoute(
         settings: routeSettings,
         builder: (_) => OrderDetail(
+          chatRoomId: arguments['chatRoomId'],
+          deliveryName: arguments['deliveryName'],
           otp: arguments['otp'],
           description: arguments['description'],
           type: arguments['type'],

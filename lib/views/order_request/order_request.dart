@@ -19,6 +19,7 @@ class OrderRequest extends StatefulWidget {
 class _OrderRequestState extends State<OrderRequest> {
   TextEditingController messageController = new TextEditingController();
   Stream<DocumentSnapshot>? orderStream;
+  late Timer _timer;
 
   @override
   void initState() {
@@ -40,9 +41,15 @@ class _OrderRequestState extends State<OrderRequest> {
         .collection('orders')
         .doc('orders')
         .snapshots();
-    Timer.periodic(const Duration(seconds: 30), (timer) {
+    _timer=Timer.periodic(const Duration(seconds: 30), (timer) {
       deleteOldOrders();
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _timer.cancel(); // Stop the timer when the widget is disposed
   }
 
   Future<void> deleteOldOrders() async {

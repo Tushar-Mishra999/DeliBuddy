@@ -104,7 +104,7 @@ class RequestCard extends StatelessWidget {
                     .collection('chats')
                     .doc("$email,$name:$deliveryEmail,$deliveryName")
                     .set({'chats': [], 'cancel': false});
-                Navigator.pushNamed(context, ChatScreen.routeName);
+                Navigator.popAndPushNamed(context, ChatScreen.routeName);
                 await FirebaseFirestore.instance
                     .collection('orders')
                     .doc('orders')

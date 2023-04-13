@@ -50,7 +50,7 @@ class _OrderDescriptionState extends State<OrderDescription> {
     String? email = prefs.getString('email');
     Map<String, dynamic>? orderMap = orders
         .firstWhere((order) => order['email'] == email, orElse: () => null);
-   
+
     if (orderMap == null) {
       return;
     }
@@ -58,16 +58,18 @@ class _OrderDescriptionState extends State<OrderDescription> {
     String status = orderMap['status'];
     final orderTimestamp = orderMap['timestamp'].millisecondsSinceEpoch;
     final now = DateTime.now().millisecondsSinceEpoch;
-
+    print(orderMap);
     if (now - orderTimestamp > 60000) {
       Fluttertoast.showToast(
-          msg: 'No delivery partners were available', backgroundColor: color2,textColor: Colors.white);
+          msg: 'No delivery partners were available',
+          backgroundColor: color2,
+          textColor: Colors.white);
       orders.remove(orderMap);
+      print(orders);
       await ordersDocument.set({
         'orders': orders,
       });
-    }
-   else if (status == 'pending') {
+    } else if (status == 'pending') {
       Fluttertoast.showToast(
           msg: 'Waiting for delivery partners to accept',
           backgroundColor: color2,
@@ -150,151 +152,163 @@ class _OrderDescriptionState extends State<OrderDescription> {
       backgroundColor: bgcolor,
       resizeToAvoidBottomInset: false,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.arrow_back_ios_new),
-                  SizedBox(
-                    width: size.width * 0.03,
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: size.height * 0.06,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: size.width * 0.05,
-                  ),
-                  Text(
-                    widget.shopName,
-                    style: GoogleFonts.sourceSansPro(
-                        fontSize: 25,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w700),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: size.height * 0.04,
-              ),
-              Container(
-                height: size.height * 0.2,
-                width: size.width * 0.82,
-                decoration: BoxDecoration(
-                  color: bgcolor,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 15,
-                      offset: const Offset(0, 0),
-                      inset: true,
-                    ),
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.7),
-                      blurRadius: 15,
-                      offset: const Offset(7, 7),
-                      inset: true,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Row(
+                  children: [
+                    GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Icon(Icons.arrow_back_ios_new)),
+                    SizedBox(
+                      width: size.width * 0.03,
                     ),
                   ],
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: TextField(
-                    controller: descriptionController,
-                    style: GoogleFonts.sourceSansPro(
-                        fontSize: 20,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w800),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: "Please type your order",
-                    ),
-                    maxLines: null,
-                  ),
+                SizedBox(
+                  height: size.height * 0.06,
                 ),
-              ),
-              SizedBox(
-                height: size.height * 0.05,
-              ),
-              Container(
-                height: size.height * 0.2,
-                width: size.width * 0.82,
-                decoration: BoxDecoration(
-                  color: bgcolor,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 15,
-                      offset: const Offset(0, 0),
-                      inset: true,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: size.width * 0.05,
                     ),
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.7),
-                      blurRadius: 15,
-                      offset: const Offset(7, 7),
-                      inset: true,
+                    Text(
+                      widget.shopName,
+                      style: GoogleFonts.sourceSansPro(
+                          fontSize: 25,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w700),
                     ),
                   ],
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: TextField(
-                    controller: addressController,
-                    style: GoogleFonts.sourceSansPro(
-                        fontSize: 20,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w800),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: "Delivery Point",
+                SizedBox(
+                  height: size.height * 0.04,
+                ),
+                Container(
+                  height: size.height * 0.2,
+                  width: size.width * 0.82,
+                  decoration: BoxDecoration(
+                    color: bgcolor,
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 15,
+                        offset: const Offset(0, 0),
+                        inset: true,
+                      ),
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.7),
+                        blurRadius: 15,
+                        offset: const Offset(7, 7),
+                        inset: true,
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: TextField(
+                      controller: descriptionController,
+                      style: GoogleFonts.sourceSansPro(
+                          fontSize: 20,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w800),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Please type your order",
+                      ),
+                      maxLines: null,
+                      textAlignVertical: TextAlignVertical.top,
                     ),
-                    maxLines: null,
                   ),
                 ),
-              ),
-              SizedBox(
-                height: size.height * 0.04,
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, ReferralScreen.routeName)
-                      .then((value) {
-                    referralCode = value.toString();
-                    if (referralCode.isNotEmpty && referralCode != 'null') {
-                      Fluttertoast.showToast(
-                          msg: "Coupon applied successfully",
-                          backgroundColor: color2,
-                          textColor: Colors.white);
-                    }
-                  });
-                },
-                child: Text(
-                  'Apply Coupon',
-                  style: GoogleFonts.sourceSansPro(
-                      fontSize: 22, color: color1, fontWeight: FontWeight.w800),
+                SizedBox(
+                  height: size.height * 0.05,
                 ),
-              ),
-              SizedBox(
-                height: size.height * 0.05,
-              ),
-              RoundedButton(
-                title: "Order",
-                size: size,
-                second: false,
-                func: () {
-                  addOrder();
-                },
-              ),
-            ],
+                Container(
+                  height: size.height * 0.2,
+                  width: size.width * 0.82,
+                  decoration: BoxDecoration(
+                    color: bgcolor,
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 15,
+                        offset: const Offset(0, 0),
+                        inset: true,
+                      ),
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.7),
+                        blurRadius: 15,
+                        offset: const Offset(7, 7),
+                        inset: true,
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: TextField(
+                      controller: addressController,
+
+                      style: GoogleFonts.sourceSansPro(
+                          fontSize: 20,
+                          color: Colors.black,
+                          fontWeight: FontWeight
+                              .w800), // allow unlimited number of lines
+                      decoration: const InputDecoration(
+                        hintMaxLines: 4,
+                        border: InputBorder.none,
+                        hintText:
+                            "Delivery location (Please type in the exact address with your hostel name/building) ",
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: size.height * 0.04,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, ReferralScreen.routeName)
+                        .then((value) {
+                      referralCode = value.toString();
+                      if (referralCode.isNotEmpty && referralCode != 'null') {
+                        Fluttertoast.showToast(
+                            msg: "Coupon applied successfully",
+                            backgroundColor: color2,
+                            textColor: Colors.white);
+                      }
+                    });
+                  },
+                  child: Text(
+                    'Apply Coupon',
+                    style: GoogleFonts.sourceSansPro(
+                        fontSize: 22,
+                        color: color1,
+                        fontWeight: FontWeight.w800),
+                  ),
+                ),
+                SizedBox(
+                  height: size.height * 0.05,
+                ),
+                RoundedButton(
+                  title: "Order",
+                  size: size,
+                  second: false,
+                  func: () {
+                    addOrder();
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

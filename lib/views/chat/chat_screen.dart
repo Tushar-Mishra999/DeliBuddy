@@ -120,7 +120,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 DocumentReference docRef = await FirebaseFirestore.instance
                     .collection('chats')
                     .doc(chatRoomId);
-                await docRef.update({'cancel': false});
+                await docRef.update({'cancel': false,'chats':[]});
                 Navigator.popAndPushNamed(context, HomeScreen.routeName);
               });
             }
@@ -240,6 +240,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   onTap: () {
                     Navigator.pushNamed(context, OrderDetail.routeName,
                         arguments: {
+                          'deliveryName':receiverName,
+                          'chatRoomId':chatRoomId,
                           'otp': otp,
                           'description': description,
                           'type': type
