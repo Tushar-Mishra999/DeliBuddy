@@ -33,7 +33,7 @@ const upiId = {
   },
   'Srikant Tripathi': {
     'image': 'assets/srikant.jpeg',
-    'id': '885195966@paytm',
+    'id': '8851956966@paytm',
   },
   'Tushar Mishra': {
     'image': 'assets/tushar.jpeg',
