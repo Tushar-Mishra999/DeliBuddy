@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delibuddy/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'coupon_card.dart';
 
 class ReferralScreen extends StatefulWidget {
@@ -24,16 +24,24 @@ class _ReferralScreenState extends State<ReferralScreen> {
   }
 
   void fetchUserData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? email = prefs.getString('email');
-    final DocumentSnapshot<Map<String, dynamic>> docSnapshot =
-        await FirebaseFirestore.instance.collection('users').doc(email).get();
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? email = prefs.getString('email');
+      final DocumentSnapshot<Map<String, dynamic>> docSnapshot =
+          await FirebaseFirestore.instance.collection('users').doc(email).get();
 
-    final userData = docSnapshot.data();
-    setState(() {
-      couponList = userData!['referralList'];
-    });
-    isLoading = false;
+      final userData = docSnapshot.data();
+      setState(() {
+        couponList = userData!['referralList'];
+      });
+      isLoading = false;
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Something went wrong, please try again',
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: color2,
+          textColor: Colors.white);
+    }
   }
 
   @override

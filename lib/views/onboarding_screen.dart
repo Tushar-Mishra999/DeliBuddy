@@ -5,7 +5,6 @@ import 'package:delibuddy/views/auth/login_screen.dart';
 import 'package:delibuddy/views/auth/registration_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-
 import '../../components/rounded_button.dart';
 
 class OnboardingScreen extends StatefulWidget {

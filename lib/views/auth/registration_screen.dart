@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:delibuddy/constants.dart';
 import 'package:delibuddy/services/auth_service.dart';
 import 'package:delibuddy/views/auth/login_screen.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../components/rounded_button.dart';
@@ -73,21 +74,30 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   isLoaded = true;
                   setState(() {});
                   AuthService authService = AuthService();
-                  if (referralController.text.isEmpty) {
-                    await authService.signUpUser(
-                        context: context,
-                        name: nameController.text.trimLeft().trimRight(),
-                        email: emailController.text.trimLeft().trimRight(),
-                        password: passwordController.text.trimLeft().trimRight());
-                    isLoaded = false;
-                  } else {
-                    await authService.signUpUser(
-                        context: context,
-                        name: nameController.text,
-                        email: emailController.text,
-                        password: passwordController.text,
-                        referralProvided: referralController.text,
-                        isReferral: true);
+                  try {
+                    if (referralController.text.isEmpty) {
+                      await authService.signUpUser(
+                          context: context,
+                          name: nameController.text.trimLeft().trimRight(),
+                          email: emailController.text.trimLeft().trimRight(),
+                          password:
+                              passwordController.text.trimLeft().trimRight());
+                      isLoaded = false;
+                    } else {
+                      await authService.signUpUser(
+                          context: context,
+                          name: nameController.text,
+                          email: emailController.text,
+                          password: passwordController.text,
+                          referralProvided: referralController.text,
+                          isReferral: true);
+                    }
+                  } catch (e) {
+                    Fluttertoast.showToast(
+                        msg: 'Something went wrong, please try again',
+                        toastLength: Toast.LENGTH_LONG,
+                        backgroundColor: color2,
+                        textColor: Colors.white);
                   }
                   isLoaded = false;
                   setState(() {});

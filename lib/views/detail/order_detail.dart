@@ -33,36 +33,44 @@ class _OrderDetailState extends State<OrderDetail> {
   TextEditingController otpController = TextEditingController();
 
   void checkOrderDelivery(String name) {
-    DocumentReference ordersDoc =
-        FirebaseFirestore.instance.collection('orders').doc('orders');
+    try {
+      DocumentReference ordersDoc =
+          FirebaseFirestore.instance.collection('orders').doc('orders');
 
-    ordersDoc.get().then((docSnapshot) async {
-      List<dynamic> orderList = docSnapshot.get('orders');
-      for (int i = 0; i < orderList.length; i++) {
-        Map<dynamic, dynamic> orderMap = orderList[i];
-        if (orderMap['name'] == name && orderMap['status'] == 'success') {
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          orderList.remove(orderMap);
-          ordersDoc.update({'orders': orderList});
-          DocumentReference docRef = await FirebaseFirestore.instance
-              .collection('chats')
-              .doc(widget.chatRoomId);
-          await docRef.update({'cancel': false, 'chats': []});
-          Fluttertoast.showToast(
-              msg: "Order delivered",
-              backgroundColor: color2,
-              textColor: Colors.white);
-          Navigator.pushNamedAndRemoveUntil(
-              context, HomeScreen.routeName, (route) => false);
-          return;
+      ordersDoc.get().then((docSnapshot) async {
+        List<dynamic> orderList = docSnapshot.get('orders');
+        for (int i = 0; i < orderList.length; i++) {
+          Map<dynamic, dynamic> orderMap = orderList[i];
+          if (orderMap['name'] == name && orderMap['status'] == 'success') {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            orderList.remove(orderMap);
+            ordersDoc.update({'orders': orderList});
+            DocumentReference docRef = await FirebaseFirestore.instance
+                .collection('chats')
+                .doc(widget.chatRoomId);
+            await docRef.update({'cancel': false, 'chats': []});
+            Fluttertoast.showToast(
+                msg: "Order delivered",
+                backgroundColor: color2,
+                textColor: Colors.white);
+            Navigator.pushNamedAndRemoveUntil(
+                context, HomeScreen.routeName, (route) => false);
+            return;
+          }
         }
-      }
 
+        Fluttertoast.showToast(
+            msg: "Order not delivered yet",
+            backgroundColor: color2,
+            textColor: Colors.white);
+      });
+    } catch (e) {
       Fluttertoast.showToast(
-          msg: "Order not delivered yet",
+          msg: 'Something went wrong, please try again',
+          toastLength: Toast.LENGTH_LONG,
           backgroundColor: color2,
           textColor: Colors.white);
-    });
+    }
   }
 
   @override

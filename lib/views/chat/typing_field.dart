@@ -1,18 +1,21 @@
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:delibuddy/constants.dart';
 import 'package:flutter/material.dart';
 
 class TypingField extends StatefulWidget {
-  const TypingField(
+  TypingField(
       {Key? key,
       required this.size,
       required this.textController,
-      required this.func})
+      required this.func,
+      required this.isLoading})
       : super(key: key);
 
   final Size size;
+  bool isLoading;
   final TextEditingController textController;
   final Function func;
 
@@ -23,18 +26,34 @@ class TypingField extends StatefulWidget {
 class _TypingFieldState extends State<TypingField> {
   String? _imageUrl;
   Future<File?> pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    return pickedFile != null ? File(pickedFile.path) : null;
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+      return pickedFile != null ? File(pickedFile.path) : null;
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Something went wrong, please try again',
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: color2,
+          textColor: Colors.white);
+    }
   }
 
   Future<String?> uploadImage(File file) async {
-    final fileName = file.path.split('/').last;
-    final reference = FirebaseStorage.instance.ref().child(fileName);
-    final uploadTask = reference.putFile(file);
-    final snapshot = await uploadTask.whenComplete(() {});
-    final downloadUrl = await snapshot.ref.getDownloadURL();
-    return downloadUrl;
+    try {
+      final fileName = file.path.split('/').last;
+      final reference = FirebaseStorage.instance.ref().child(fileName);
+      final uploadTask = reference.putFile(file);
+      final snapshot = await uploadTask.whenComplete(() {});
+      final downloadUrl = await snapshot.ref.getDownloadURL();
+      return downloadUrl;
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Something went wrong, please try again',
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: color2,
+          textColor: Colors.white);
+    }
   }
 
   @override
@@ -82,17 +101,19 @@ class _TypingFieldState extends State<TypingField> {
           SizedBox(width: size.width * 0.05),
           GestureDetector(
             onTap: () async {
+              widget.isLoading = true;
+              setState(() {});
               final file = await pickImage();
               if (file != null) {
                 final url = await uploadImage(file);
                 if (url != null) {
-                  setState(() {
-                    _imageUrl = url;
-                    widget.textController.text = _imageUrl!;
-                    widget.func(isImage: true);
-                  });
+                  _imageUrl = url;
+                  widget.textController.text = _imageUrl!;
+                  widget.func(isImage: true);
                 }
               }
+              widget.isLoading = false;
+              setState(() {});
             },
             child:
                 Icon(Icons.attach_file, color: color1, size: size.width * 0.06),

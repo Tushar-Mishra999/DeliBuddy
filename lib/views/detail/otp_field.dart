@@ -30,25 +30,33 @@ class OtpTextField extends StatefulWidget {
 
 class _OtpTextFieldState extends State<OtpTextField> {
   void updateOrderStatus(String deliveryName) {
-    DocumentReference ordersDoc =
-        FirebaseFirestore.instance.collection('orders').doc('orders');
+    try {
+      DocumentReference ordersDoc =
+          FirebaseFirestore.instance.collection('orders').doc('orders');
 
-    ordersDoc.get().then((docSnapshot) async {
-      List<dynamic> orderList = docSnapshot.get('orders');
-      for (int i = 0; i < orderList.length; i++) {
-        Map<dynamic, dynamic> orderMap = orderList[i];
-        if (orderMap['deliveryName'] == deliveryName) {
-          orderMap['status'] = 'success';
-          orderList[i] = orderMap;
-          break;
+      ordersDoc.get().then((docSnapshot) async {
+        List<dynamic> orderList = docSnapshot.get('orders');
+        for (int i = 0; i < orderList.length; i++) {
+          Map<dynamic, dynamic> orderMap = orderList[i];
+          if (orderMap['deliveryName'] == deliveryName) {
+            orderMap['status'] = 'success';
+            orderList[i] = orderMap;
+            break;
+          }
         }
-      }
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setBool('isChat', false);
-      ordersDoc.update({'orders': orderList});
-      Navigator.pushNamedAndRemoveUntil(
-          context, OrderRequest.routeName, (route) => false);
-    });
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setBool('isChat', false);
+        ordersDoc.update({'orders': orderList});
+        Navigator.pushNamedAndRemoveUntil(
+            context, OrderRequest.routeName, (route) => false);
+      });
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Something went wrong, please try again',
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: color2,
+          textColor: Colors.white);
+    }
   }
 
   @override

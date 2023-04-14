@@ -36,61 +36,77 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void retrieveData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? name = prefs.getString('name');
-    type = prefs.getString('type')!;
-    final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
-        await FirebaseFirestore.instance
-            .collection('orders')
-            .doc('orders')
-            .get();
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? name = prefs.getString('name');
+      type = prefs.getString('type')!;
+      final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+          await FirebaseFirestore.instance
+              .collection('orders')
+              .doc('orders')
+              .get();
 
-    Map<String, dynamic> mp = {};
-    List<dynamic> orders = documentSnapshot.data()!['orders'];
-    for (var order in orders) {
-      if (order['name'] == name || order['deliveryName'] == name) {
-        mp = order;
-        break;
+      Map<String, dynamic> mp = {};
+      List<dynamic> orders = documentSnapshot.data()!['orders'];
+      for (var order in orders) {
+        if (order['name'] == name || order['deliveryName'] == name) {
+          mp = order;
+          break;
+        }
       }
+
+      receiverName = type == 'delivery' ? mp['name'] : mp['deliveryName'];
+      isReferral = mp['isReferral'];
+      chatRoomId = mp['email'] +
+          ',' +
+          mp['name'] +
+          ":" +
+          mp['deliveryEmail'] +
+          ',' +
+          mp['deliveryName'];
+      otp = mp['otp'].toString();
+      description = mp['description'];
+
+      chatStream = FirebaseFirestore.instance
+          .collection('chats')
+          .doc(chatRoomId)
+          .snapshots();
+      prefs.setBool('isChat', true);
+      isLoading = false;
+      setState(() {});
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Something went wrong, please try again',
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: color2,
+          textColor: Colors.white);
     }
-
-    receiverName = type == 'delivery' ? mp['name'] : mp['deliveryName'];
-    isReferral = mp['isReferral'];
-    chatRoomId = mp['email'] +
-        ',' +
-        mp['name'] +
-        ":" +
-        mp['deliveryEmail'] +
-        ',' +
-        mp['deliveryName'];
-    otp = mp['otp'].toString();
-    description = mp['description'];
-
-    chatStream = FirebaseFirestore.instance
-        .collection('chats')
-        .doc(chatRoomId)
-        .snapshots();
-    prefs.setBool('isChat', true);
-    isLoading = false;
-    setState(() {});
   }
 
   void sendMessage({bool isImage = false}) async {
-    if (messageController.text.isNotEmpty) {
-      Map<String, dynamic> messageMap = {
-        "message": messageController.text,
-        "sender": type == 'client' ? 'client' : 'delivery',
-        "time": DateTime.now().millisecondsSinceEpoch,
-        "isImage": isImage
-      };
+    try {
+      if (messageController.text.isNotEmpty) {
+        Map<String, dynamic> messageMap = {
+          "message": messageController.text,
+          "sender": type == 'client' ? 'client' : 'delivery',
+          "time": DateTime.now().millisecondsSinceEpoch,
+          "isImage": isImage
+        };
 
-      FirebaseFirestore.instance.collection('chats').doc(chatRoomId).update({
-        'chats': FieldValue.arrayUnion([messageMap]),
-      });
+        FirebaseFirestore.instance.collection('chats').doc(chatRoomId).update({
+          'chats': FieldValue.arrayUnion([messageMap]),
+        });
 
-      setState(() {
-        messageController.text = "";
-      });
+        setState(() {
+          messageController.text = "";
+        });
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Something went wrong, please try again',
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: color2,
+          textColor: Colors.white);
     }
   }
 
@@ -120,7 +136,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 DocumentReference docRef = await FirebaseFirestore.instance
                     .collection('chats')
                     .doc(chatRoomId);
-                await docRef.update({'cancel': false,'chats':[]});
+                await docRef.update({'cancel': false, 'chats': []});
                 Navigator.popAndPushNamed(context, HomeScreen.routeName);
               });
             }
@@ -206,25 +222,34 @@ class _ChatScreenState extends State<ChatScreen> {
                 const Spacer(),
                 GestureDetector(
                   onTap: () async {
-                    DocumentReference docRef = await FirebaseFirestore.instance
-                        .collection('chats')
-                        .doc(chatRoomId);
-                    DocumentReference ordersDoc = FirebaseFirestore.instance
-                        .collection('orders')
-                        .doc('orders');
+                    try {
+                      DocumentReference docRef = await FirebaseFirestore
+                          .instance
+                          .collection('chats')
+                          .doc(chatRoomId);
+                      DocumentReference ordersDoc = FirebaseFirestore.instance
+                          .collection('orders')
+                          .doc('orders');
 
-                    ordersDoc.get().then((docSnapshot) async {
-                      List<dynamic> orderList = docSnapshot.get('orders');
-                      for (int i = 0; i < orderList.length; i++) {
-                        Map<dynamic, dynamic> orderMap = orderList[i];
-                        if (orderMap['name'] == receiverName ||
-                            orderMap['deliveryName' == receiverName]) {
-                          orderList.remove(orderMap);
-                          ordersDoc.update({'orders': orderList});
+                      ordersDoc.get().then((docSnapshot) async {
+                        List<dynamic> orderList = docSnapshot.get('orders');
+                        for (int i = 0; i < orderList.length; i++) {
+                          Map<dynamic, dynamic> orderMap = orderList[i];
+                          if (orderMap['name'] == receiverName ||
+                              orderMap['deliveryName' == receiverName]) {
+                            orderList.remove(orderMap);
+                            ordersDoc.update({'orders': orderList});
+                          }
                         }
-                      }
-                    });
-                    await docRef.update({'cancel': true});
+                      });
+                      await docRef.update({'cancel': true});
+                    } catch (e) {
+                      Fluttertoast.showToast(
+                          msg: 'Something went wrong, please try again',
+                          toastLength: Toast.LENGTH_LONG,
+                          backgroundColor: color2,
+                          textColor: Colors.white);
+                    }
                   },
                   child: type == 'delivery'
                       ? const Icon(
@@ -240,8 +265,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   onTap: () {
                     Navigator.pushNamed(context, OrderDetail.routeName,
                         arguments: {
-                          'deliveryName':receiverName,
-                          'chatRoomId':chatRoomId,
+                          'deliveryName': receiverName,
+                          'chatRoomId': chatRoomId,
                           'otp': otp,
                           'description': description,
                           'type': type
@@ -290,6 +315,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     TypingField(
                       size: size,
                       func: sendMessage,
+                      isLoading: isLoading,
                       textController: messageController,
                     )
                   ],

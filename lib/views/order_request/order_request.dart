@@ -1,11 +1,10 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delibuddy/constants.dart';
 import 'package:delibuddy/views/order_request/request_card.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../profile/profile_screen.dart';
 
 class OrderRequest extends StatefulWidget {
@@ -53,6 +52,7 @@ class _OrderRequestState extends State<OrderRequest> {
   }
 
   Future<void> deleteOldOrders() async {
+    try{
     final currentTime = DateTime.now().millisecondsSinceEpoch;
     final ordersRef =
         FirebaseFirestore.instance.collection('orders').doc('orders');
@@ -68,6 +68,13 @@ class _OrderRequestState extends State<OrderRequest> {
         }
       });
       await ordersRef.update({'orders': updatedOrders});
+    }
+     } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Something went wrong, please try again',
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: color2,
+          textColor: Colors.white);
     }
   }
 

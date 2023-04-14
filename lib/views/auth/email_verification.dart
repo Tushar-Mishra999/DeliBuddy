@@ -20,7 +20,7 @@ class _EmailVerificationState extends State<EmailVerification> {
   void initState() {
     user = FirebaseAuth.instance.currentUser!;
     user.sendEmailVerification();
-    timer = Timer.periodic(Duration(seconds: 5), (timer) {
+    timer = Timer.periodic(Duration(seconds: 3), (timer) {
       checkEmailVerified();
     });
     super.initState();
@@ -33,13 +33,20 @@ class _EmailVerificationState extends State<EmailVerification> {
   }
 
   Future<void> checkEmailVerified() async {
-    user = FirebaseAuth.instance.currentUser!;
+    try{user = FirebaseAuth.instance.currentUser!;
     await user.reload();
     if (user.emailVerified) {
       timer.cancel();
       Fluttertoast.showToast(
           msg: "Registration Successful",backgroundColor: color2,textColor: Colors.white);
       Navigator.popAndPushNamed(context, LoginScreen.routeName);
+    }}
+    catch(e){
+      Fluttertoast.showToast(
+          msg: 'Something went wrong, please try again',
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: color2,
+          textColor: Colors.white);
     }
   }
 

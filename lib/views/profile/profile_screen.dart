@@ -29,17 +29,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void fetchUserData() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    email = pref.getString('email')!;
-    final DocumentSnapshot<Map<String, dynamic>> docSnapshot =
-        await FirebaseFirestore.instance.collection('users').doc(email).get();
+    try {
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      email = pref.getString('email')!;
+      final DocumentSnapshot<Map<String, dynamic>> docSnapshot =
+          await FirebaseFirestore.instance.collection('users').doc(email).get();
 
-    final userData = docSnapshot.data();
-    setState(() {
-      name = userData!['name'];
-      referralCode = userData['referralCode'];
-      isLoading = false;
-    });
+      final userData = docSnapshot.data();
+      setState(() {
+        name = userData!['name'];
+        referralCode = userData['referralCode'];
+        isLoading = false;
+      });
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Something went wrong, please try again',
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: color2,
+          textColor: Colors.white);
+    }
   }
 
   Future<void> signOut() async {
@@ -112,7 +120,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ' $referralCode',
                       style: GoogleFonts.sourceSansPro(
                         fontSize: 25,
-                        fontWeight: FontWeight.w800, 
+                        fontWeight: FontWeight.w800,
                       ),
                       onTap: () {
                         Clipboard.setData(ClipboardData(text: referralCode));

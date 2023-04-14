@@ -10,6 +10,7 @@ import 'package:delibuddy/views/order_request/order_request.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FirstScreen extends StatefulWidget {
@@ -28,7 +29,7 @@ class _FirstScreenState extends State<FirstScreen> {
   }
 
   void checkLoginStatus() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+   try{ SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
     bool isChat = false;
     bool isOrder = false;
@@ -72,7 +73,14 @@ class _FirstScreenState extends State<FirstScreen> {
         Navigator.pushNamedAndRemoveUntil(
             context, OnboardingScreen.routeName, (route) => false);
       }
-    });
+    });}
+    catch(e){
+      Fluttertoast.showToast(
+          msg: 'Something went wrong, please try again',
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: color2,
+          textColor: Colors.white);
+    }
   }
 
   @override

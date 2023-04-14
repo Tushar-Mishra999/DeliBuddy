@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:delibuddy/components/search_bar.dart';
 import 'package:delibuddy/views/home/shop.dart';
 import 'package:delibuddy/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../profile/profile_screen.dart';
@@ -27,15 +25,23 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void fetchstores() async {
-    final DocumentSnapshot<Map<String, dynamic>> snapshot =
-        await FirebaseFirestore.instance
-            .collection('stores')
-            .doc('stores')
-            .get();
-    isLoading = false;
-    setState(() {
-      stores = List<Map<String, dynamic>>.from(snapshot.data()!['stores']);
-    });
+    try {
+      final DocumentSnapshot<Map<String, dynamic>> snapshot =
+          await FirebaseFirestore.instance
+              .collection('stores')
+              .doc('stores')
+              .get();
+      isLoading = false;
+      setState(() {
+        stores = List<Map<String, dynamic>>.from(snapshot.data()!['stores']);
+      });
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Something went wrong, please try again',
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: color2,
+          textColor: Colors.white);
+    }
   }
 
   @override

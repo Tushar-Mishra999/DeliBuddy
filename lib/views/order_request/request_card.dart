@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delibuddy/constants.dart';
 import 'package:delibuddy/views/chat/chat_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -83,31 +84,39 @@ class RequestCard extends StatelessWidget {
                 String? deliveryName = prefs.getString('name');
                 String? deliveryEmail = prefs.getString('email');
                 String? type = prefs.getString('type');
-                final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
-                    await FirebaseFirestore.instance
-                        .collection('orders')
-                        .doc('orders')
-                        .get();
+                try {
+                  final DocumentSnapshot<Map<String, dynamic>>
+                      documentSnapshot = await FirebaseFirestore.instance
+                          .collection('orders')
+                          .doc('orders')
+                          .get();
 
-                List<dynamic> orders = documentSnapshot.data()!['orders'];
-                int otp = Random().nextInt(9000) + 1000;
-                orders.forEach((order) {
-                  if (order['name'] == name) {
-                    order['deliveryName'] = deliveryName;
-                    order['deliveryEmail'] = deliveryEmail;
-                    order['status'] = 'accepted';
-                    order['otp'] = otp.toString();
-                  }
-                });
-                await FirebaseFirestore.instance
-                    .collection('chats')
-                    .doc("$email,$name:$deliveryEmail,$deliveryName")
-                    .set({'chats': [], 'cancel': false});
-                Navigator.popAndPushNamed(context, ChatScreen.routeName);
-                await FirebaseFirestore.instance
-                    .collection('orders')
-                    .doc('orders')
-                    .update({'orders': orders});
+                  List<dynamic> orders = documentSnapshot.data()!['orders'];
+                  int otp = Random().nextInt(9000) + 1000;
+                  orders.forEach((order) {
+                    if (order['name'] == name) {
+                      order['deliveryName'] = deliveryName;
+                      order['deliveryEmail'] = deliveryEmail;
+                      order['status'] = 'accepted';
+                      order['otp'] = otp.toString();
+                    }
+                  });
+                  await FirebaseFirestore.instance
+                      .collection('chats')
+                      .doc("$email,$name:$deliveryEmail,$deliveryName")
+                      .set({'chats': [], 'cancel': false});
+                  Navigator.popAndPushNamed(context, ChatScreen.routeName);
+                  await FirebaseFirestore.instance
+                      .collection('orders')
+                      .doc('orders')
+                      .update({'orders': orders});
+                } catch (e) {
+                  Fluttertoast.showToast(
+                      msg: 'Something went wrong, please try again',
+                      toastLength: Toast.LENGTH_LONG,
+                      backgroundColor: color2,
+                      textColor: Colors.white);
+                }
               },
               child: Container(
                 margin: EdgeInsets.only(bottom: 5),

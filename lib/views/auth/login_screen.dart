@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:delibuddy/constants.dart';
 import 'package:delibuddy/services/auth_service.dart';
 import 'package:delibuddy/views/auth/registration_screen.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../components/rounded_button.dart';
 import '../../../components/textformfield.dart';
@@ -60,10 +61,21 @@ class _LoginScreenState extends State<LoginScreen> {
                         isLoaded = true;
                         setState(() {});
                         AuthService authService = AuthService();
-                        await authService.signInUser(
-                            context: context,
-                            email: emailController.text.trimLeft().trimRight(),
-                            password: passwordController.text.trimLeft().trimRight());
+                        try {
+                          await authService.signInUser(
+                              context: context,
+                              email:
+                                  emailController.text.trimLeft().trimRight(),
+                              password: passwordController.text
+                                  .trimLeft()
+                                  .trimRight());
+                        } catch (e) {
+                          Fluttertoast.showToast(
+                              msg: 'Something went wrong, please try again',
+                              toastLength: Toast.LENGTH_LONG,
+                              backgroundColor: color2,
+                              textColor: Colors.white);
+                        }
                         isLoaded = false;
                         setState(() {});
                       },
@@ -76,8 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      RegistrationScreen()));
+                                  builder: (context) => RegistrationScreen()));
                         },
                         child: RichText(
                           textAlign: TextAlign.center,
