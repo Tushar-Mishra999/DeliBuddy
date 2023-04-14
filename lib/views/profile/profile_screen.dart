@@ -69,80 +69,103 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: bgcolor,
-      body: Center(
-        child: isLoading
-            ? const CircularProgressIndicator(
-                color: color1,
-              )
-            : Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                SizedBox(
-                  height: size.height * 0.2,
-                ),
-                Container(
-                  height: size.width * 0.5,
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(10)),
-                  child: Image.asset(
-                    'assets/profile.png',
-                    fit: BoxFit.fill,
-                  ),
-                ),
-                SizedBox(
-                  height: size.height * 0.05,
-                ),
-                Text(
-                  name,
-                  style: GoogleFonts.sourceSansPro(
-                      fontSize: 30, fontWeight: FontWeight.w700),
-                ),
-                SizedBox(
-                  height: size.height * 0.05,
-                ),
-                Text(
-                  'Email- $email',
-                  style: GoogleFonts.sourceSansPro(
-                      fontSize: 25, fontWeight: FontWeight.w500),
-                ),
-                SizedBox(
-                  height: size.height * 0.02,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+      body: SafeArea(
+        child: Center(
+          child: isLoading
+              ? const CircularProgressIndicator(
+                  color: color1,
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      'Referral Code -',
-                      style: GoogleFonts.sourceSansPro(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w500,
+                      SizedBox(
+                        height: size.height * 0.04,
                       ),
-                    ),
-                    SelectableText(
-                      ' $referralCode',
-                      style: GoogleFonts.sourceSansPro(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w800,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Icon(
+                                Icons.arrow_back_ios_new,
+                              )),
+                          SizedBox(
+                            width: size.width * 0.8,
+                          ),
+                        ],
                       ),
-                      onTap: () {
-                        Clipboard.setData(ClipboardData(text: referralCode));
-                        Fluttertoast.showToast(
-                            msg: "Referral code copied",
-                            backgroundColor: color2,
-                            textColor: Colors.white);
-                      },
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: size.height * 0.06,
-                ),
-                RoundedButton(
-                    title: "Logout",
-                    size: size,
-                    func: () {
-                      signOut();
-                    },
-                    second: false),
-              ]),
+                      SizedBox(
+                        height: size.height * 0.05,
+                      ),
+                      Container(
+                        height: size.width * 0.5,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Image.asset(
+                          'assets/profile.png',
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                      SizedBox(
+                        height: size.height * 0.05,
+                      ),
+                      Text(
+                        name,
+                        style: GoogleFonts.sourceSansPro(
+                            fontSize: 30, fontWeight: FontWeight.w700),
+                      ),
+                      SizedBox(
+                        height: size.height * 0.05,
+                      ),
+                      Text(
+                        'Email- $email',
+                        style: GoogleFonts.sourceSansPro(
+                            fontSize: 25, fontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(
+                        height: size.height * 0.02,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Referral Code -',
+                            style: GoogleFonts.sourceSansPro(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SelectableText(
+                            ' $referralCode',
+                            style: GoogleFonts.sourceSansPro(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w800,
+                            ),
+                            onTap: () {
+                              Clipboard.setData(
+                                  ClipboardData(text: referralCode));
+                              Fluttertoast.showToast(
+                                  msg: "Referral code copied",
+                                  backgroundColor: color2,
+                                  textColor: Colors.white);
+                            },
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: size.height * 0.06,
+                      ),
+                      RoundedButton(
+                          title: "Logout",
+                          size: size,
+                          func: () {
+                            signOut();
+                          },
+                          second: false),
+                    ]),
+        ),
       ),
     );
   }

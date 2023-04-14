@@ -87,7 +87,25 @@ class _OrderDetailState extends State<OrderDetail> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(
-                  height: size.height * 0.1,
+                  height: size.height * 0.04,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Icon(
+                          Icons.arrow_back_ios_new,
+                        )),
+                    SizedBox(
+                      width: size.width * 0.8,
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: size.height * 0.03,
                 ),
                 widget.type == 'client'
                     ? Row(

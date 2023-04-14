@@ -61,7 +61,7 @@ class _OrderDescriptionState extends State<OrderDescription> {
       print(orderMap);
       if (now - orderTimestamp > 60000) {
         Fluttertoast.showToast(
-            msg: 'No delivery partners were available',
+            msg: 'No delivery buddies were available',
             backgroundColor: color2,
             textColor: Colors.white);
         orders.remove(orderMap);
@@ -71,7 +71,7 @@ class _OrderDescriptionState extends State<OrderDescription> {
         });
       } else if (status == 'pending') {
         Fluttertoast.showToast(
-            msg: 'Waiting for delivery partners to accept',
+            msg: 'Waiting for delivery buddies to accept',
             backgroundColor: color2,
             textColor: Colors.white);
       } else if (status == 'reject') {
