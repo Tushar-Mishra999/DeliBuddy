@@ -6,9 +6,8 @@ import 'package:delibuddy/views/detail/order_detail.dart';
 import 'package:delibuddy/views/order_request/order_request.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 import '../home/home_screen.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -26,6 +25,8 @@ class _ChatScreenState extends State<ChatScreen> {
   String type = '';
   String description = '';
   String receiverName = '';
+  String userPhoneNumber = '';
+  String deliveryPhoneNumber = '';
   bool isReferral = false;
   Stream<DocumentSnapshot>? chatStream;
   TextEditingController messageController = TextEditingController();
@@ -72,6 +73,27 @@ class _ChatScreenState extends State<ChatScreen> {
           .doc(chatRoomId)
           .snapshots();
       prefs.setBool('isChat', true);
+      final DocumentSnapshot<Map<String, dynamic>> userDocSnapshot =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(mp['email'])
+              .get();
+
+      final userData = userDocSnapshot.data();
+      if (userData!['phoneNumber'] != null) {
+        userPhoneNumber = userData['phoneNumber'];
+      }
+
+      final DocumentSnapshot<Map<String, dynamic>> deliveryDocSnapshot =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(mp['deliveryEmail'])
+              .get();
+
+      final deliveryData = deliveryDocSnapshot.data();
+      if (deliveryData!['phoneNumber'] != null) {
+        deliveryPhoneNumber = deliveryData['phoneNumber'];
+      }
       isLoading = false;
       setState(() {});
     } catch (e) {
@@ -257,6 +279,27 @@ class _ChatScreenState extends State<ChatScreen> {
                           color: color1,
                         )
                       : Container(),
+                ),
+                SizedBox(
+                  width: size.width * 0.05,
+                ),
+                GestureDetector(
+                  onTap: () async {
+                    String contactNumber = type != 'client'
+                        ? userPhoneNumber
+                        : deliveryPhoneNumber;
+                    if (contactNumber.isEmpty) {
+                      Fluttertoast.showToast(
+                          msg: "Recipient's number is not available");
+                      return;
+                    }
+                    final url = 'tel:${contactNumber}';
+                    await launchUrl(Uri.parse(url));
+                  },
+                  child: Icon(
+                    Icons.call,
+                    color: color1,
+                  ),
                 ),
                 SizedBox(
                   width: size.width * 0.05,

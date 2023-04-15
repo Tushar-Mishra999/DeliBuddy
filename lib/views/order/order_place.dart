@@ -58,8 +58,7 @@ class _OrderDescriptionState extends State<OrderDescription> {
       String status = orderMap['status'];
       final orderTimestamp = orderMap['timestamp'].millisecondsSinceEpoch;
       final now = DateTime.now().millisecondsSinceEpoch;
-      print(orderMap);
-      if (now - orderTimestamp > 60000) {
+      if (now - orderTimestamp > 120000) {
         Fluttertoast.showToast(
             msg: 'No delivery buddies were available',
             backgroundColor: color2,
@@ -74,7 +73,7 @@ class _OrderDescriptionState extends State<OrderDescription> {
             msg: 'Waiting for delivery buddies to accept',
             backgroundColor: color2,
             textColor: Colors.white);
-      } else if (status == 'reject') {
+      } else if (status == 'rejected') {
         Fluttertoast.showToast(
             msg: 'Order rejected, please try again after sometime',
             backgroundColor: color2,
@@ -96,11 +95,17 @@ class _OrderDescriptionState extends State<OrderDescription> {
           referralList.remove(referralCode);
           DocumentReference ordersDoc =
               FirebaseFirestore.instance.collection('users').doc(clientEmail);
-          ordersDoc.update({'referralList': referralList});
+          await ordersDoc.update({'referralList': referralList});
         }
 
         Navigator.popAndPushNamed(context, ChatScreen.routeName);
       }
+       else {
+        Fluttertoast.showToast(
+            msg: 'Order rejected, please try again after sometime',
+            backgroundColor: color2,
+            textColor: Colors.white);
+      } 
     } catch (e) {
       Fluttertoast.showToast(
           msg: 'Something went wrong, please try again',
@@ -112,6 +117,16 @@ class _OrderDescriptionState extends State<OrderDescription> {
 
   void addOrder() async {
     try {
+      //checking important fields
+      if (descriptionController.text.isEmpty ||
+          addressController.text.isEmpty) {
+        Fluttertoast.showToast(
+            msg: "Required fields are empty.",
+            backgroundColor: color2,
+            textColor: Colors.white);
+        return;
+      }
+
       // Get a reference to the 'orders' collection
       final documentSnapshot = await FirebaseFirestore.instance
           .collection('orders')
@@ -120,10 +135,22 @@ class _OrderDescriptionState extends State<OrderDescription> {
       final documentRef =
           FirebaseFirestore.instance.collection('orders').doc('orders');
 
-      final currentOrders = (documentSnapshot.data()!['orders']);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? name = prefs.getString('name');
       String? email = prefs.getString('email');
+      final currentOrders = (documentSnapshot.data()!['orders']);
+      // Map<String, dynamic>? orderMap = currentOrders
+      //     .firstWhere((order) => order['email'] == email, orElse: () => null);
+
+      // //checking whether user already has an order or not
+      // if (orderMap != null) {
+      //   Fluttertoast.showToast(
+      //       msg: "You have already ordered, please wait for sometime.",
+      //       backgroundColor: color2,
+      //       textColor: Colors.white);
+      //   return;
+      // }
+
       final order = {
         'name': name,
         'email': email,

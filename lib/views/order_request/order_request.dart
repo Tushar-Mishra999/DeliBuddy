@@ -23,24 +23,24 @@ class _OrderRequestState extends State<OrderRequest> {
   @override
   void initState() {
     super.initState();
-    FirebaseFirestore.instance
-        .collection('orders')
-        .doc('orders')
-        .get()
-        .then((docSnapshot) {
-      if (!docSnapshot.exists) {
-        FirebaseFirestore.instance
-            .collection('orders')
-            .doc('orders')
-            .set({'orders': []});
-      }
-    });
+    // FirebaseFirestore.instance
+    //     .collection('orders')
+    //     .doc('orders')
+    //     .get()
+    //     .then((docSnapshot) {
+    //   if (!docSnapshot.exists) {
+    //     FirebaseFirestore.instance
+    //         .collection('orders')
+    //         .doc('orders')
+    //         .set({'orders': []});
+    //   }
+    // });
 
     orderStream = FirebaseFirestore.instance
         .collection('orders')
         .doc('orders')
         .snapshots();
-    _timer=Timer.periodic(const Duration(seconds: 30), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 30), (timer) {
       deleteOldOrders();
     });
   }
@@ -52,24 +52,25 @@ class _OrderRequestState extends State<OrderRequest> {
   }
 
   Future<void> deleteOldOrders() async {
-    try{
-    final currentTime = DateTime.now().millisecondsSinceEpoch;
-    final ordersRef =
-        FirebaseFirestore.instance.collection('orders').doc('orders');
-    final docSnapshot = await ordersRef.get();
-    if (docSnapshot.exists) {
-      final orders =
-          List<Map<String, dynamic>>.from(docSnapshot.data()!['orders']);
-      final updatedOrders = <Map<String, dynamic>>[];
-      orders.forEach((order) {
-        final orderTime = order['timestamp'].millisecondsSinceEpoch;
-        if (currentTime - orderTime < 60000) {
-          updatedOrders.add(order);
-        }
-      });
-      await ordersRef.update({'orders': updatedOrders});
-    }
-     } catch (e) {
+    try {
+      final currentTime = DateTime.now().millisecondsSinceEpoch;
+      final ordersRef =
+          FirebaseFirestore.instance.collection('orders').doc('orders');
+      final docSnapshot = await ordersRef.get();
+      if (docSnapshot.exists) {
+        final orders =
+            List<Map<String, dynamic>>.from(docSnapshot.data()!['orders']);
+        final updatedOrders = <Map<String, dynamic>>[];
+        orders.forEach((order) {
+          final orderTime = order['timestamp'].millisecondsSinceEpoch;
+          if (currentTime - orderTime < 120000 ||
+              order['status'] != 'pending') {
+            updatedOrders.add(order);
+          }
+        });
+        await ordersRef.update({'orders': updatedOrders});
+      }
+    } catch (e) {
       Fluttertoast.showToast(
           msg: 'Something went wrong, please try again',
           toastLength: Toast.LENGTH_LONG,
@@ -99,6 +100,7 @@ class _OrderRequestState extends State<OrderRequest> {
               : Container(
                   width: size.width * 0.9,
                   child: ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: orderList.length,
                     itemBuilder: (context, index) {
@@ -129,50 +131,52 @@ class _OrderRequestState extends State<OrderRequest> {
     return Scaffold(
       backgroundColor: bgcolor,
       body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  const Spacer(),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, ProfileScreen.routeName);
-                    },
-                    child: const Icon(
-                      Icons.person_outlined,
-                      size: 35,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    const Spacer(),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, ProfileScreen.routeName);
+                      },
+                      child: const Icon(
+                        Icons.person_outlined,
+                        size: 35,
+                      ),
                     ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: size.height * 0.05,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: size.width * 0.09,
+                  ),
+                  Text(
+                    'Orders',
+                    style: GoogleFonts.sourceSansPro(
+                        fontSize: 25,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w700),
                   ),
                 ],
               ),
-            ),
-            SizedBox(
-              height: size.height * 0.05,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: size.width * 0.09,
-                ),
-                Text(
-                  'Orders',
-                  style: GoogleFonts.sourceSansPro(
-                      fontSize: 25,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w700),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: size.height * 0.03,
-            ),
-            OrderList()
-          ],
+              SizedBox(
+                height: size.height * 0.03,
+              ),
+              OrderList()
+            ],
+          ),
         ),
       ),
     );

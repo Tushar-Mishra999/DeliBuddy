@@ -39,12 +39,15 @@ class _OrderDetailState extends State<OrderDetail> {
 
       ordersDoc.get().then((docSnapshot) async {
         List<dynamic> orderList = docSnapshot.get('orders');
+
         for (int i = 0; i < orderList.length; i++) {
           Map<dynamic, dynamic> orderMap = orderList[i];
           if (orderMap['name'] == name && orderMap['status'] == 'success') {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             orderList.remove(orderMap);
-            ordersDoc.update({'orders': orderList});
+            await ordersDoc.update({'orders': orderList});
+
+
             DocumentReference docRef = await FirebaseFirestore.instance
                 .collection('chats')
                 .doc(widget.chatRoomId);

@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delibuddy/components/rounded_button.dart';
 import 'package:delibuddy/constants.dart';
+import 'package:delibuddy/views/detail/otp_field.dart';
 import 'package:delibuddy/views/onboarding_screen.dart';
+import 'package:delibuddy/views/profile/phonenumber_field.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,7 +24,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String name = '';
   String email = '';
   String referralCode = '';
+  String phoneNumber = '';
   bool isLoading = true;
+  TextEditingController phoneController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -40,6 +45,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         name = userData!['name'];
         referralCode = userData['referralCode'];
         isLoading = false;
+        if (userData['phoneNumber'] != null) {
+          phoneNumber = userData['phoneNumber'];
+        }
       });
     } catch (e) {
       Fluttertoast.showToast(
@@ -68,6 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: bgcolor,
       body: SafeArea(
         child: Center(
@@ -127,30 +136,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       SizedBox(
                         height: size.height * 0.02,
                       ),
+                      PhoneNumberField(
+                        controller: phoneController,
+                        hintText: "Please enter your whatsapp number",
+                        title: "",
+                        phoneNumber: phoneNumber,
+                      ),
+                      SizedBox(
+                        height: size.height * 0.02,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Referral Code -',
+                            'Referral Code : ',
                             style: GoogleFonts.sourceSansPro(
                               fontSize: 25,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          SelectableText(
-                            ' $referralCode',
-                            style: GoogleFonts.sourceSansPro(
-                              fontSize: 25,
-                              fontWeight: FontWeight.w800,
+                          DottedBorder(
+                            color: Colors.black,
+                            borderType: BorderType.RRect,
+                            radius: Radius.circular(5),
+                            strokeWidth: 1,
+                            child: SelectableText(
+                              ' $referralCode',
+                              style: GoogleFonts.sourceSansPro(
+                                fontSize: 25,
+                                fontWeight: FontWeight.w800,
+                              ),
+                              onTap: () {
+                                Clipboard.setData(
+                                    ClipboardData(text: referralCode));
+                                Fluttertoast.showToast(
+                                    msg: "Referral code copied",
+                                    backgroundColor: color2,
+                                    textColor: Colors.white);
+                              },
                             ),
-                            onTap: () {
-                              Clipboard.setData(
-                                  ClipboardData(text: referralCode));
-                              Fluttertoast.showToast(
-                                  msg: "Referral code copied",
-                                  backgroundColor: color2,
-                                  textColor: Colors.white);
-                            },
                           ),
                         ],
                       ),

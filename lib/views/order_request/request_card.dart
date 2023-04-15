@@ -135,17 +135,44 @@ class RequestCard extends StatelessWidget {
                 ),
               ),
             ),
-            Container(
-              margin: EdgeInsets.only(bottom: 5),
-              decoration: BoxDecoration(
-                  color: color1, borderRadius: BorderRadius.circular(10)),
-              height: size.height * 0.06,
-              width: size.width * 0.38,
-              child: Center(
-                child: Text(
-                  'DENY',
-                  style: GoogleFonts.sourceSansPro(
-                      color: Colors.white, fontSize: 20),
+            GestureDetector(
+              onTap: ()async{
+                try {
+                  final DocumentSnapshot<Map<String, dynamic>>
+                      documentSnapshot = await FirebaseFirestore.instance
+                          .collection('orders')
+                          .doc('orders')
+                          .get();
+                  List<dynamic> orders = documentSnapshot.data()!['orders'];
+                  orders.forEach((order) {
+                    if (order['name'] == name) {
+                      order['status'] = 'rejected';
+                    }
+                  });
+                  await FirebaseFirestore.instance
+                      .collection('orders')
+                      .doc('orders')
+                      .update({'orders': orders});
+                } catch (e) {
+                  Fluttertoast.showToast(
+                      msg: 'Something went wrong, please try again',
+                      toastLength: Toast.LENGTH_LONG,
+                      backgroundColor: color2,
+                      textColor: Colors.white);
+                }
+              },
+              child: Container(
+                margin: EdgeInsets.only(bottom: 5),
+                decoration: BoxDecoration(
+                    color: color1, borderRadius: BorderRadius.circular(10)),
+                height: size.height * 0.06,
+                width: size.width * 0.38,
+                child: Center(
+                  child: Text(
+                    'DENY',
+                    style: GoogleFonts.sourceSansPro(
+                        color: Colors.white, fontSize: 20),
+                  ),
                 ),
               ),
             )

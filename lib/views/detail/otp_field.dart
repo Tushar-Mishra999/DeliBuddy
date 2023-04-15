@@ -29,6 +29,8 @@ class OtpTextField extends StatefulWidget {
 }
 
 class _OtpTextFieldState extends State<OtpTextField> {
+
+  
   void updateOrderStatus(String deliveryName) {
     try {
       DocumentReference ordersDoc =
@@ -44,8 +46,6 @@ class _OtpTextFieldState extends State<OtpTextField> {
             break;
           }
         }
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setBool('isChat', false);
         ordersDoc.update({'orders': orderList});
         Navigator.pushNamedAndRemoveUntil(
             context, OrderRequest.routeName, (route) => false);

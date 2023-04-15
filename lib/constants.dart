@@ -46,5 +46,9 @@ const upiId = {
   'Parv Haria':{
     'image':'assets/parv.jpeg',
     'id':'7303070301@paytm'
+  },
+  'Ved Srivastava':{
+    'image':'assets/ved.jpeg',
+    'id':'7905735195@paytm'
   }
 };

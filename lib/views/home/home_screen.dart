@@ -4,6 +4,7 @@ import 'package:delibuddy/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../profile/profile_screen.dart';
 
@@ -26,6 +27,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void fetchstores() async {
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? email = prefs.getString('email');
+
+      final DocumentSnapshot<Map<String, dynamic>> docSnapshot =
+          await FirebaseFirestore.instance.collection('users').doc(email).get();
+      if (docSnapshot.data()!['phoneNumber'] == null) {
+        Fluttertoast.showToast(
+            msg: "Please add phone number through Profile screen",
+            backgroundColor: color2,
+            textColor: Colors.white);
+      }
+      
       final DocumentSnapshot<Map<String, dynamic>> snapshot =
           await FirebaseFirestore.instance
               .collection('stores')

@@ -158,15 +158,18 @@ class AuthService {
           await FirebaseFirestore.instance.collection('users').doc(email).get();
 
       name = snapshot.data()!['name'];
-
+      
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('name', name);
       prefs.setString('email', email);
       prefs.setBool('isLoggedIn', true);
+      
       Fluttertoast.showToast(
           msg: "Login Successful",
           backgroundColor: color2,
           textColor: Colors.white);
+      
+        
 
       final DocumentSnapshot<Map<String, dynamic>> deliverySnapshot =
           await FirebaseFirestore.instance
@@ -219,6 +222,7 @@ class AuthService {
         Navigator.pushNamedAndRemoveUntil(
             context, HomeScreen.routeName, (route) => false);
       }
+     
     } on FirebaseAuthException catch (error) {
       switch (error.code) {
         case "invalid-email":
