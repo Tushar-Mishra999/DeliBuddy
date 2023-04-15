@@ -1,11 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:delibuddy/views/order_request/order_request.dart';
 import 'package:flutter/material.dart' hide BoxDecoration, BoxShadow;
 import 'package:delibuddy/constants.dart';
 import 'package:flutter_inset_box_shadow/flutter_inset_box_shadow.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class PhoneNumberField extends StatefulWidget {
   final TextEditingController controller;
@@ -35,34 +31,13 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
     widget.controller.text = widget.phoneNumber;
   }
 
-  void updatePhoneNumber(String phoneNumber) async {
-    try {
-      SharedPreferences pref = await SharedPreferences.getInstance();
-      String email = pref.getString('email')!;
-      final DocumentReference<Map<String, dynamic>> docReference =
-          await FirebaseFirestore.instance.collection('users').doc(email);
-      await docReference.update({'phoneNumber': phoneNumber});
-      
-      Fluttertoast.showToast(
-          msg: "Phone number updated",
-          toastLength: Toast.LENGTH_LONG,
-          backgroundColor: color2,
-          textColor: Colors.white);
-    } catch (e) {
-      Fluttertoast.showToast(
-          msg: 'Something went wrong, please try again',
-          toastLength: Toast.LENGTH_LONG,
-          backgroundColor: color2,
-          textColor: Colors.white);
-    }
-  }
+  
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Container(
-      margin: EdgeInsets.only(top: 20),
-      width: size.width * 0.8,
+      width: size.width * 0.45,
       height: size.height * 0.07,
       decoration: BoxDecoration(
         color: bgcolor,
@@ -84,9 +59,6 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
       ),
       child: Center(
         child: TextFormField(
-          onFieldSubmitted: (value) async {
-            updatePhoneNumber(value);
-          },
           controller: widget.controller,
           style: GoogleFonts.sourceSansPro(
               color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15),

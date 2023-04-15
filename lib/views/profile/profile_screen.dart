@@ -72,123 +72,169 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  void updatePhoneNumber(String phoneNumber) async {
+    try {
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      String email = pref.getString('email')!;
+      final DocumentReference<Map<String, dynamic>> docReference =
+          await FirebaseFirestore.instance.collection('users').doc(email);
+      await docReference.update({'phoneNumber': phoneNumber});
+
+      Fluttertoast.showToast(
+          msg: "Phone number updated",
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: color2,
+          textColor: Colors.white);
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Something went wrong, please try again',
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: color2,
+          textColor: Colors.white);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       backgroundColor: bgcolor,
       body: SafeArea(
         child: Center(
-          child: isLoading
-              ? const CircularProgressIndicator(
-                  color: color1,
-                )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                      SizedBox(
-                        height: size.height * 0.04,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Icon(
-                                Icons.arrow_back_ios_new,
-                              )),
-                          SizedBox(
-                            width: size.width * 0.8,
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: size.height * 0.05,
-                      ),
-                      Container(
-                        height: size.width * 0.5,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Image.asset(
-                          'assets/profile.png',
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                      SizedBox(
-                        height: size.height * 0.05,
-                      ),
-                      Text(
-                        name,
-                        style: GoogleFonts.sourceSansPro(
-                            fontSize: 30, fontWeight: FontWeight.w700),
-                      ),
-                      SizedBox(
-                        height: size.height * 0.05,
-                      ),
-                      Text(
-                        'Email- $email',
-                        style: GoogleFonts.sourceSansPro(
-                            fontSize: 25, fontWeight: FontWeight.w500),
-                      ),
-                      SizedBox(
-                        height: size.height * 0.02,
-                      ),
-                      PhoneNumberField(
-                        controller: phoneController,
-                        hintText: "Please enter your whatsapp number",
-                        title: "",
-                        phoneNumber: phoneNumber,
-                      ),
-                      SizedBox(
-                        height: size.height * 0.02,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Referral Code : ',
-                            style: GoogleFonts.sourceSansPro(
-                              fontSize: 25,
-                              fontWeight: FontWeight.w500,
+          child: SingleChildScrollView(
+            child: isLoading
+                ? const CircularProgressIndicator(
+                    color: color1,
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Icon(
+                                  Icons.arrow_back_ios_new,
+                                )),
+                            SizedBox(
+                              width: size.width * 0.8,
                             ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: size.height * 0.05,
+                        ),
+                        Container(
+                          height: size.width * 0.5,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Image.asset(
+                            'assets/profile.png',
+                            fit: BoxFit.fill,
                           ),
-                          DottedBorder(
-                            color: Colors.black,
-                            borderType: BorderType.RRect,
-                            radius: Radius.circular(5),
-                            strokeWidth: 1,
-                            child: SelectableText(
-                              ' $referralCode',
+                        ),
+                        SizedBox(
+                          height: size.height * 0.05,
+                        ),
+                        Text(
+                          name,
+                          style: GoogleFonts.sourceSansPro(
+                              fontSize: 30, fontWeight: FontWeight.w700),
+                        ),
+                        SizedBox(
+                          height: size.height * 0.05,
+                        ),
+                        Text(
+                          'Email- $email',
+                          style: GoogleFonts.sourceSansPro(
+                              fontSize: 25, fontWeight: FontWeight.w500),
+                        ),
+                        SizedBox(
+                          height: size.height * 0.03,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Referral Code : ',
                               style: GoogleFonts.sourceSansPro(
                                 fontSize: 25,
-                                fontWeight: FontWeight.w800,
+                                fontWeight: FontWeight.w500,
                               ),
-                              onTap: () {
-                                Clipboard.setData(
-                                    ClipboardData(text: referralCode));
-                                Fluttertoast.showToast(
-                                    msg: "Referral code copied",
-                                    backgroundColor: color2,
-                                    textColor: Colors.white);
-                              },
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: size.height * 0.06,
-                      ),
-                      RoundedButton(
-                          title: "Logout",
-                          size: size,
-                          func: () {
-                            signOut();
-                          },
-                          second: false),
-                    ]),
+                            DottedBorder(
+                              color: Colors.black,
+                              borderType: BorderType.RRect,
+                              radius: Radius.circular(5),
+                              strokeWidth: 1,
+                              child: SelectableText(
+                                ' $referralCode',
+                                style: GoogleFonts.sourceSansPro(
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                                onTap: () {
+                                  Clipboard.setData(
+                                      ClipboardData(text: referralCode));
+                                  Fluttertoast.showToast(
+                                      msg: "Referral code copied",
+                                      backgroundColor: color2,
+                                      textColor: Colors.white);
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: size.height * 0.04,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            PhoneNumberField(
+                              controller: phoneController,
+                              hintText: "Enter whatsapp no.",
+                              title: "",
+                              phoneNumber: phoneNumber,
+                            ),
+                            SizedBox(
+                              width: size.width * 0.04,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                updatePhoneNumber(phoneController.text);
+                              },
+                              child: Container(
+                                width: size.width * 0.25,
+                                height: size.height * 0.07,
+                                decoration: BoxDecoration(
+                                    color: color2,
+                                    borderRadius: BorderRadius.circular(12)),
+                                child: Center(
+                                  child: Text(
+                                    'SAVE',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          height: size.height * 0.06,
+                        ),
+                        RoundedButton(
+                            title: "Logout",
+                            size: size,
+                            func: () {
+                              signOut();
+                            },
+                            second: false),
+                      ]),
+          ),
         ),
       ),
     );

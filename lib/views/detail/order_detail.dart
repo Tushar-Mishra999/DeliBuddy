@@ -47,7 +47,6 @@ class _OrderDetailState extends State<OrderDetail> {
             orderList.remove(orderMap);
             await ordersDoc.update({'orders': orderList});
 
-
             DocumentReference docRef = await FirebaseFirestore.instance
                 .collection('chats')
                 .doc(widget.chatRoomId);
@@ -59,13 +58,21 @@ class _OrderDetailState extends State<OrderDetail> {
             Navigator.pushNamedAndRemoveUntil(
                 context, HomeScreen.routeName, (route) => false);
             return;
+          } else if (orderMap['name'] == name &&
+              orderMap['status'] == 'accepted') {
+            Fluttertoast.showToast(
+                msg: "Order not delivered yet",
+                backgroundColor: color2,
+                textColor: Colors.white);
           }
         }
-
         Fluttertoast.showToast(
-            msg: "Order not delivered yet",
+            msg: "Order delivered",
             backgroundColor: color2,
             textColor: Colors.white);
+        Navigator.pushNamedAndRemoveUntil(
+            context, HomeScreen.routeName, (route) => false);
+        return;
       });
     } catch (e) {
       Fluttertoast.showToast(
