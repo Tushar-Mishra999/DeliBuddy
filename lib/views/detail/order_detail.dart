@@ -16,6 +16,7 @@ class OrderDetail extends StatefulWidget {
     super.key,
     required this.otp,
     required this.description,
+    required this.address,
     required this.type,
     required this.chatRoomId,
     this.deliveryName = '',
@@ -24,6 +25,7 @@ class OrderDetail extends StatefulWidget {
   final String description;
   final String type;
   final String deliveryName;
+  final String address;
   final String chatRoomId;
   @override
   State<OrderDetail> createState() => _OrderDetailState();
@@ -43,7 +45,6 @@ class _OrderDetailState extends State<OrderDetail> {
         for (int i = 0; i < orderList.length; i++) {
           Map<dynamic, dynamic> orderMap = orderList[i];
           if (orderMap['name'] == name && orderMap['status'] == 'success') {
-            SharedPreferences prefs = await SharedPreferences.getInstance();
             orderList.remove(orderMap);
             await ordersDoc.update({'orders': orderList});
 
@@ -192,6 +193,39 @@ class _OrderDetailState extends State<OrderDetail> {
                     ),
                   ),
                 ),
+                widget.type == 'delivery'
+                    ? Container(
+                        width: size.width * 0.8,
+                        decoration: BoxDecoration(
+                          color: bgcolor,
+                          borderRadius: BorderRadius.circular(15),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              blurRadius: 10,
+                              offset: Offset(0, 0),
+                              inset: true,
+                            ),
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.7),
+                              blurRadius: 10,
+                              offset: Offset(4, 4),
+                              inset: true,
+                            ),
+                          ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Text(
+                            widget.address,
+                            style: GoogleFonts.sourceSansPro(
+                                fontSize: 20,
+                                color: color2,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      )
+                    : Container(),
                 widget.type == 'delivery'
                     ? OtpTextField(
                         otp: widget.otp,

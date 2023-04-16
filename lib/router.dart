@@ -75,6 +75,7 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
         settings: routeSettings,
         builder: (_) => OrderDetail(
           chatRoomId: arguments['chatRoomId'],
+          address:arguments['address'],
           deliveryName: arguments['deliveryName'],
           otp: arguments['otp'],
           description: arguments['description'],

@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delibuddy/constants.dart';
+import 'package:delibuddy/notifications.dart';
 import 'package:delibuddy/views/order_request/request_card.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -40,6 +42,7 @@ class _OrderRequestState extends State<OrderRequest> {
         .collection('orders')
         .doc('orders')
         .snapshots();
+
     _timer = Timer.periodic(const Duration(seconds: 30), (timer) {
       deleteOldOrders();
     });
@@ -87,6 +90,18 @@ class _OrderRequestState extends State<OrderRequest> {
       builder: (context, snapshot) {
         if (snapshot.data != null) {
           List<dynamic> orderList = snapshot.data!['orders'];
+          //latest order
+          Map<String, dynamic> latestOrder =
+              orderList.isNotEmpty ? orderList.last : {};
+          // Call the showNotification method if a new order is added
+          if (latestOrder.isNotEmpty && latestOrder['status'] == 'pending') {
+            NotificationApi.showNotification(
+              id: Random().nextInt(1000),
+              title: latestOrder['shop'],
+              body: latestOrder['description'],
+              payload: "New Order",
+            );
+          }
           return orderList.isEmpty
               ? Center(
                   child: Text(
@@ -111,6 +126,7 @@ class _OrderRequestState extends State<OrderRequest> {
                               name: details['name'],
                               description: details['description'],
                               shop: details['shop'],
+                              isReferral: details['isReferral'],
                               address: details['address'],
                               email: details['email'],
                             )
@@ -142,7 +158,7 @@ class _OrderRequestState extends State<OrderRequest> {
                   children: [
                     const Spacer(),
                     GestureDetector(
-                      onTap: () {
+                      onTap: () async {
                         Navigator.pushNamed(context, ProfileScreen.routeName);
                       },
                       child: const Icon(

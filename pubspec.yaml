@@ -44,6 +44,7 @@ dependencies:
   smooth_page_indicator: ^1.0.1
   url_launcher: ^6.1.10
   dotted_border: ^2.0.0+3
+  flutter_local_notifications: ^13.0.0
   
 
 

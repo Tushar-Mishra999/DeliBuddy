@@ -26,6 +26,7 @@ class _ChatScreenState extends State<ChatScreen> {
   String description = '';
   String receiverName = '';
   String userPhoneNumber = '';
+  String address = '';
   String deliveryPhoneNumber = '';
   bool isReferral = false;
   Stream<DocumentSnapshot>? chatStream;
@@ -67,7 +68,7 @@ class _ChatScreenState extends State<ChatScreen> {
           mp['deliveryName'];
       otp = mp['otp'].toString();
       description = mp['description'];
-
+      address = mp['address'];
       chatStream = FirebaseFirestore.instance
           .collection('chats')
           .doc(chatRoomId)
@@ -310,6 +311,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         arguments: {
                           'deliveryName': receiverName,
                           'chatRoomId': chatRoomId,
+                          'address': address,
                           'otp': otp,
                           'description': description,
                           'type': type

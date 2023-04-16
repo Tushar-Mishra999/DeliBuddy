@@ -16,6 +16,7 @@ class RequestCard extends StatelessWidget {
       required this.shop,
       required this.description,
       required this.address,
+      required this.isReferral,
       required this.email})
       : super(key: key);
 
@@ -25,6 +26,7 @@ class RequestCard extends StatelessWidget {
   final String description;
   final String email;
   final String address;
+  final bool isReferral;
 
   @override
   Widget build(BuildContext context) {
@@ -36,13 +38,18 @@ class RequestCard extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Padding(
           padding: const EdgeInsets.only(top: 8.0, left: 12, right: 12),
-          child: Text(
-            shop.length > 30 ? name.substring(0, 12) + "..." : name,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-            textAlign: TextAlign.left,
-            style: GoogleFonts.sourceSansPro(
-                color: bgcolor, fontSize: 24, fontWeight: FontWeight.w500),
+          child: Row(
+            children: [
+              Text(
+                shop.length > 30 ? name.substring(0, 12) + "..." : name,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+                textAlign: TextAlign.left,
+                style: GoogleFonts.sourceSansPro(
+                    color: bgcolor, fontSize: 24, fontWeight: FontWeight.w500),
+              ),
+              isReferral?Icon(Icons.star,color: Colors.red,):Container(),
+            ],
           ),
         ),
         Padding(
