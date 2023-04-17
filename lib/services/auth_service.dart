@@ -158,18 +158,16 @@ class AuthService {
           await FirebaseFirestore.instance.collection('users').doc(email).get();
 
       name = snapshot.data()!['name'];
-      
+
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('name', name);
       prefs.setString('email', email);
       prefs.setBool('isLoggedIn', true);
-      
+
       Fluttertoast.showToast(
           msg: "Login Successful",
           backgroundColor: color2,
           textColor: Colors.white);
-      
-        
 
       final DocumentSnapshot<Map<String, dynamic>> deliverySnapshot =
           await FirebaseFirestore.instance
@@ -181,48 +179,39 @@ class AuthService {
           List<String>.from(deliverySnapshot.data()!['email']);
 
       bool isChat = false;
-      bool isOrder = false;
-      final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
-          await FirebaseFirestore.instance
-              .collection('orders')
-              .doc('orders')
-              .get();
-      final List<dynamic> ordersArray = documentSnapshot.data()!['orders'];
-
-      for (final order in ordersArray) {
-        if (order['name'] == name || order['deliveryName'] == name) {
-          if (order['status'] == 'accepted') {
-            isChat = true;
-          } else {
-            isOrder = true;
-          }
-          break;
-        }
-      }
-
+      String type = '';
       if (deliveryEmail.contains(email)) {
         prefs.setString('type', "delivery");
+        type = 'delivery';
       } else {
         prefs.setString('type', 'client');
+        type='client';
+      }
+
+      String searchCategory = type == 'client' ? 'name' : 'deliveryName';
+      final QuerySnapshot<Map<String, dynamic>> querySnapshot =
+          await FirebaseFirestore.instance
+              .collection('orders')
+              .where('status', isEqualTo: 'accepted')
+              .where(searchCategory,
+                  isEqualTo: name)
+              .limit(1)
+              .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        isChat = true;
       }
 
       if (isChat) {
         Navigator.pushNamedAndRemoveUntil(
             context, ChatScreen.routeName, (route) => false);
-      } 
-       else if (isOrder) {
-          String shop = prefs.getString('shop')??'';
-          Navigator.pushNamedAndRemoveUntil(context,
-              OrderDescription.routeName,arguments: {'shopName':shop}, (route) => false);
-        }
-      else if (deliveryEmail.contains(email)) {
+      } else if (deliveryEmail.contains(email)) {
         Navigator.pushNamedAndRemoveUntil(
             context, OrderRequest.routeName, (route) => false);
       } else {
         Navigator.pushNamedAndRemoveUntil(
             context, HomeScreen.routeName, (route) => false);
       }
-     
     } on FirebaseAuthException catch (error) {
       switch (error.code) {
         case "invalid-email":

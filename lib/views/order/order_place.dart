@@ -6,6 +6,7 @@ import 'package:delibuddy/views/order/referral_screen.dart';
 import 'package:delibuddy/views/chat/chat_screen.dart';
 import 'package:flutter/material.dart' hide BoxDecoration, BoxShadow;
 import 'package:flutter_inset_box_shadow/flutter_inset_box_shadow.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -42,70 +43,65 @@ class _OrderDescriptionState extends State<OrderDescription> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('shop', widget.shopName);
-      final DocumentReference ordersDocument =
-          FirebaseFirestore.instance.collection('orders').doc('orders');
-      final DocumentSnapshot<dynamic> orderDoc = await ordersDocument.get();
-
-      List<dynamic> orders = orderDoc.data()!['orders'];
       String? email = prefs.getString('email');
-      Map<String, dynamic>? orderMap = orders
-          .firstWhere((order) => order['email'] == email, orElse: () => null);
 
-      if (orderMap == null) {
-        return;
-      }
+      final CollectionReference ordersCollection =
+          FirebaseFirestore.instance.collection('orders');
+      final QuerySnapshot<dynamic> ordersSnapshot = await ordersCollection
+          .where('email', isEqualTo: email)
+          .where('status', whereIn: ['pending', 'delrejected', 'accepted'])
+          .get();
 
-      String status = orderMap['status'];
-      final orderTimestamp = orderMap['timestamp'].millisecondsSinceEpoch;
-      final now = DateTime.now().millisecondsSinceEpoch;
-      if (now - orderTimestamp > 120000) {
-        Fluttertoast.showToast(
-            msg: 'No delivery buddies were available',
-            backgroundColor: color2,
-            textColor: Colors.white);
-        orders.remove(orderMap);
-        print(orders);
-        await ordersDocument.set({
-          'orders': orders,
-        });
-      } else if (status == 'pending') {
-        Fluttertoast.showToast(
-            msg: 'Waiting for delivery buddies to accept',
-            backgroundColor: color2,
-            textColor: Colors.white);
-      } else if (status == 'rejected') {
-        Fluttertoast.showToast(
-            msg: 'Order rejected, please try again after sometime',
-            backgroundColor: color2,
-            textColor: Colors.white);
-        orders.remove(orderMap);
-        await ordersDocument.set({
-          'orders': orders,
-        });
-      } else if (status == 'accepted') {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        String? clientEmail = prefs.getString('email');
-        if (referralCode.isNotEmpty && referralCode != 'null') {
-          final DocumentSnapshot documentSnapshot2 = await FirebaseFirestore
-              .instance
-              .collection('users')
-              .doc(clientEmail)
-              .get();
-          List<dynamic> referralList = documentSnapshot2['referralList'];
-          referralList.remove(referralCode);
-          DocumentReference ordersDoc =
-              FirebaseFirestore.instance.collection('users').doc(clientEmail);
-          await ordersDoc.update({'referralList': referralList});
+      final int currentTimestamp = Timestamp.now().seconds;
+
+      ordersSnapshot.docs.forEach((doc) async {
+        final String status = doc.data()['status'];
+        final Timestamp timestamp = doc.data()['timestamp'];
+        final int orderTimestamp = timestamp.seconds;
+
+         if (status == 'delrejected') {
+          Fluttertoast.showToast(
+              msg: 'Order rejected, please try again after sometime',
+              backgroundColor: color2,
+              textColor: Colors.white);
+          await ordersCollection.doc(doc.id).update({'status': 'rejected'});
+        } else if (status == 'accepted') {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          String? clientEmail = prefs.getString('email');
+          if (referralCode.isNotEmpty && referralCode != 'null') {
+            final DocumentSnapshot documentSnapshot2 = await FirebaseFirestore
+                .instance
+                .collection('users')
+                .doc(clientEmail)
+                .get();
+            List<dynamic> referralList = documentSnapshot2['referralList'];
+            referralList.remove(referralCode);
+            DocumentReference ordersDoc =
+                FirebaseFirestore.instance.collection('users').doc(clientEmail);
+            await ordersDoc.update({'referralList': referralList});
+          }
+
+          Navigator.popAndPushNamed(context, ChatScreen.routeName);
         }
-
-        Navigator.popAndPushNamed(context, ChatScreen.routeName);
-      }
-       else {
-        Fluttertoast.showToast(
-            msg: 'Order rejected, please try again after sometime',
-            backgroundColor: color2,
-            textColor: Colors.white);
-      } 
+        else if (currentTimestamp > orderTimestamp + 120) {
+          Fluttertoast.showToast(
+              msg: 'No delivery buddies were available',
+              backgroundColor: color2,
+              textColor: Colors.white);
+          await ordersCollection.doc(doc.id).update({'status': 'notfound'});
+        } else if (status == 'pending') {
+          Fluttertoast.showToast(
+              msg: 'Waiting for delivery buddies to accept',
+              backgroundColor: color2,
+              textColor: Colors.white);
+        } 
+        else {
+          Fluttertoast.showToast(
+              msg: 'Order rejected, please try again after sometime',
+              backgroundColor: color2,
+              textColor: Colors.white);
+        }
+      });
     } catch (e) {
       Fluttertoast.showToast(
           msg: 'Something went wrong, please try again',
@@ -128,49 +124,40 @@ class _OrderDescriptionState extends State<OrderDescription> {
       }
 
       // Get a reference to the 'orders' collection
-      final documentSnapshot = await FirebaseFirestore.instance
-          .collection('orders')
-          .doc('orders')
-          .get();
-      final documentRef =
-          FirebaseFirestore.instance.collection('orders').doc('orders');
+      final CollectionReference ordersCollection =
+          FirebaseFirestore.instance.collection('orders');
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? name = prefs.getString('name');
       String? email = prefs.getString('email');
-      final currentOrders = (documentSnapshot.data()!['orders']);
-      // Map<String, dynamic>? orderMap = currentOrders
-      //     .firstWhere((order) => order['email'] == email, orElse: () => null);
 
-      // //checking whether user already has an order or not
-      // if (orderMap != null) {
-      //   Fluttertoast.showToast(
-      //       msg: "You have already ordered, please wait for sometime.",
-      //       backgroundColor: color2,
-      //       textColor: Colors.white);
-      //   return;
-      // }
+      final QuerySnapshot querySnapshot = await ordersCollection
+          .where('email', isEqualTo: email)
+          .where('status', isEqualTo: 'pending')
+          .get();
 
-      final order = {
-        'name': name,
-        'email': email,
-        'description': descriptionController.text,
-        'address': addressController.text,
-        'shop': widget.shopName,
-        'status': 'pending',
-        'isReferral':
-            referralCode.isNotEmpty && referralCode != 'null' ? true : false,
-        'timestamp': Timestamp.now()
-      };
-
-      currentOrders.add(order);
-
-      await documentRef.update({'orders': currentOrders});
-
-      Fluttertoast.showToast(
-          msg: 'Order has been placed successfully',
-          backgroundColor: color2,
-          textColor: Colors.white);
+      if (querySnapshot.docs.isNotEmpty) {
+        Fluttertoast.showToast(
+            msg: 'Order already exists, please wait',
+            backgroundColor: color2,
+            textColor: Colors.white);
+        return;
+      } else {
+        ordersCollection.add({
+          'name': name,
+          'email': email,
+          'description': descriptionController.text,
+          'address': addressController.text,
+          'shop': widget.shopName,
+          'status': 'pending',
+          'isReferral': referralCode.isNotEmpty && referralCode != 'null',
+          'timestamp': Timestamp.now()
+        });
+        Fluttertoast.showToast(
+            msg: 'Order has been placed successfully',
+            backgroundColor: color2,
+            textColor: Colors.white);
+      }
     } catch (e) {
       Fluttertoast.showToast(
           msg: 'Error adding order to orders array: $e',

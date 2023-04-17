@@ -29,27 +29,24 @@ class OtpTextField extends StatefulWidget {
 }
 
 class _OtpTextFieldState extends State<OtpTextField> {
-
-  
-  void updateOrderStatus(String deliveryName) {
+  void updateOrderStatus(String deliveryName) async {
     try {
-      DocumentReference ordersDoc =
-          FirebaseFirestore.instance.collection('orders').doc('orders');
+      final CollectionReference ordersCollection =
+          FirebaseFirestore.instance.collection('orders');
 
-      ordersDoc.get().then((docSnapshot) async {
-        List<dynamic> orderList = docSnapshot.get('orders');
-        for (int i = 0; i < orderList.length; i++) {
-          Map<dynamic, dynamic> orderMap = orderList[i];
-          if (orderMap['deliveryName'] == deliveryName) {
-            orderMap['status'] = 'success';
-            orderList[i] = orderMap;
-            break;
-          }
-        }
-        ordersDoc.update({'orders': orderList});
+      QuerySnapshot orderSnapshot = await ordersCollection
+          .where('deliveryName', isEqualTo: deliveryName)
+          .where('status', isEqualTo: 'accepted')
+          .limit(1)
+          .get();
+
+      if (orderSnapshot.docs.isNotEmpty) {
+        DocumentReference orderDoc =
+            ordersCollection.doc(orderSnapshot.docs.first.id);
+        await orderDoc.update({'status': 'success'});
         Navigator.pushNamedAndRemoveUntil(
             context, OrderRequest.routeName, (route) => false);
-      });
+      }
     } catch (e) {
       Fluttertoast.showToast(
           msg: 'Something went wrong, please try again',

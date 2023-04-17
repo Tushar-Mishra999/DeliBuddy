@@ -34,47 +34,34 @@ class OrderDetail extends StatefulWidget {
 class _OrderDetailState extends State<OrderDetail> {
   TextEditingController otpController = TextEditingController();
 
-  void checkOrderDelivery(String name) {
+  void checkOrderDelivery(String name) async {
     try {
-      DocumentReference ordersDoc =
-          FirebaseFirestore.instance.collection('orders').doc('orders');
+      var querySnapshot = await FirebaseFirestore.instance
+          .collection('orders')
+          .where('name', isEqualTo: name)
+          .get();
 
-      ordersDoc.get().then((docSnapshot) async {
-        List<dynamic> orderList = docSnapshot.get('orders');
-
-        for (int i = 0; i < orderList.length; i++) {
-          Map<dynamic, dynamic> orderMap = orderList[i];
-          if (orderMap['name'] == name && orderMap['status'] == 'success') {
-            orderList.remove(orderMap);
-            await ordersDoc.update({'orders': orderList});
-
-            DocumentReference docRef = await FirebaseFirestore.instance
+      for (var doc in querySnapshot.docs) {
+        if (doc['status'] == 'success') {
+          DocumentReference docRef = await FirebaseFirestore.instance
                 .collection('chats')
                 .doc(widget.chatRoomId);
-            await docRef.update({'cancel': false, 'chats': []});
             Fluttertoast.showToast(
                 msg: "Order delivered",
                 backgroundColor: color2,
                 textColor: Colors.white);
             Navigator.pushNamedAndRemoveUntil(
                 context, HomeScreen.routeName, (route) => false);
-            return;
-          } else if (orderMap['name'] == name &&
-              orderMap['status'] == 'accepted') {
+            await docRef.update({'cancel': false, 'chats': []});
+        }else if (doc['status'] == 'accepted') {
             Fluttertoast.showToast(
                 msg: "Order not delivered yet",
                 backgroundColor: color2,
                 textColor: Colors.white);
+            
           }
-        }
-        Fluttertoast.showToast(
-            msg: "Order delivered",
-            backgroundColor: color2,
-            textColor: Colors.white);
-        Navigator.pushNamedAndRemoveUntil(
-            context, HomeScreen.routeName, (route) => false);
-        return;
-      });
+      }
+
     } catch (e) {
       Fluttertoast.showToast(
           msg: 'Something went wrong, please try again',
@@ -193,6 +180,11 @@ class _OrderDetailState extends State<OrderDetail> {
                     ),
                   ),
                 ),
+                widget.type == 'delivery'
+                    ? SizedBox(
+                        height: size.height * 0.02,
+                      )
+                    : Container(),
                 widget.type == 'delivery'
                     ? Container(
                         width: size.width * 0.8,

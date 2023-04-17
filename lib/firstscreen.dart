@@ -29,52 +29,44 @@ class _FirstScreenState extends State<FirstScreen> {
   }
 
   void checkLoginStatus() async {
-   try{ SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-    bool isChat = false;
-    bool isOrder = false;
-    String type = prefs.getString('type') ?? 'client';
-    String name = prefs.getString('name') ?? '';
-    final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
-        await FirebaseFirestore.instance
-            .collection('orders')
-            .doc('orders')
-            .get();
-    final List<dynamic> ordersArray = documentSnapshot.data()!['orders'];
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+      bool isChat = false;
+      bool isOrder = false;
+      String type = prefs.getString('type') ?? 'client';
+      String name = prefs.getString('name') ?? '';
+      String searchCategory = type == 'client' ? 'name' : 'deliveryName';
+      final QuerySnapshot<Map<String, dynamic>> querySnapshot =
+          await FirebaseFirestore.instance
+              .collection('orders')
+              .where('status', isEqualTo: 'accepted')
+              .where(searchCategory, isEqualTo: name)
+              .limit(1)
+              .get();
 
-    for (final order in ordersArray) {
-      if (order['name'] == name || order['deliveryName'] == name) {
-        if (order['status'] == 'accepted') {
-          isChat = true;
-        } else {
-          isOrder = true;
-        }
-        break;
+      if (querySnapshot.docs.isNotEmpty) {
+        isChat = true;
       }
-    }
 
-    _timer = Timer(const Duration(seconds: 1), () {
-      if (isLoggedIn) {
-        if (isChat) {
-          Navigator.pushNamedAndRemoveUntil(
-              context, ChatScreen.routeName, (route) => false);
-        } else if (isOrder) {
-          String shop = prefs.getString('shop')??'';
-          Navigator.pushNamedAndRemoveUntil(context,
-              OrderDescription.routeName,arguments: {'shopName':shop}, (route) => false);
-        } else if (type == 'client') {
-          Navigator.pushNamedAndRemoveUntil(
-              context, HomeScreen.routeName, (route) => false);
+      _timer = Timer(const Duration(seconds: 1), () {
+        if (isLoggedIn) {
+          if (isChat) {
+            Navigator.pushNamedAndRemoveUntil(
+                context, ChatScreen.routeName, (route) => false);
+          } else if (type == 'client') {
+            Navigator.pushNamedAndRemoveUntil(
+                context, HomeScreen.routeName, (route) => false);
+          } else {
+            Navigator.pushNamedAndRemoveUntil(
+                context, OrderRequest.routeName, (route) => false);
+          }
         } else {
           Navigator.pushNamedAndRemoveUntil(
-              context, OrderRequest.routeName, (route) => false);
+              context, OnboardingScreen.routeName, (route) => false);
         }
-      } else {
-        Navigator.pushNamedAndRemoveUntil(
-            context, OnboardingScreen.routeName, (route) => false);
-      }
-    });}
-    catch(e){
+      });
+    } catch (e) {
       Fluttertoast.showToast(
           msg: 'Something went wrong, please try again',
           toastLength: Toast.LENGTH_LONG,

@@ -48,7 +48,12 @@ class RequestCard extends StatelessWidget {
                 style: GoogleFonts.sourceSansPro(
                     color: bgcolor, fontSize: 24, fontWeight: FontWeight.w500),
               ),
-              isReferral?Icon(Icons.star,color: Colors.red,):Container(),
+              isReferral
+                  ? Icon(
+                      Icons.star,
+                      color: Colors.red,
+                    )
+                  : Container(),
             ],
           ),
         ),
@@ -92,34 +97,30 @@ class RequestCard extends StatelessWidget {
                 String? deliveryEmail = prefs.getString('email');
                 String? type = prefs.getString('type');
                 try {
-                  final DocumentSnapshot<Map<String, dynamic>>
-                      documentSnapshot = await FirebaseFirestore.instance
-                          .collection('orders')
-                          .doc('orders')
-                          .get();
-
-                  List<dynamic> orders = documentSnapshot.data()!['orders'];
+                  final CollectionReference ordersCollection =
+                      FirebaseFirestore.instance.collection('orders');
                   int otp = Random().nextInt(9000) + 1000;
-                  orders.forEach((order) {
-                    if (order['name'] == name) {
-                      order['deliveryName'] = deliveryName;
-                      order['deliveryEmail'] = deliveryEmail;
-                      order['status'] = 'accepted';
-                      order['otp'] = otp.toString();
-                    }
-                  });
+                  QuerySnapshot querySnapshot = await ordersCollection
+                      .where('email', isEqualTo: email)
+                      .where('status', isEqualTo: 'pending')
+                      .limit(1)
+                      .get();
+
                   await FirebaseFirestore.instance
                       .collection('chats')
                       .doc("$email,$name:$deliveryEmail,$deliveryName")
                       .set({'chats': [], 'cancel': false});
                   Navigator.popAndPushNamed(context, ChatScreen.routeName);
-                  await FirebaseFirestore.instance
-                      .collection('orders')
-                      .doc('orders')
-                      .update({'orders': orders});
+                    String docId = querySnapshot.docs[0].id;
+                    await ordersCollection.doc(docId).update({
+                      'deliveryName': deliveryName,
+                      'deliveryEmail': deliveryEmail,
+                      'status': 'accepted',
+                      'otp': otp.toString(),
+                    });
                 } catch (e) {
                   Fluttertoast.showToast(
-                      msg: 'Something went wrong, please try again',
+                      msg: e.toString(),
                       toastLength: Toast.LENGTH_LONG,
                       backgroundColor: color2,
                       textColor: Colors.white);
@@ -143,23 +144,23 @@ class RequestCard extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: ()async{
+              onTap: () async {
                 try {
-                  final DocumentSnapshot<Map<String, dynamic>>
-                      documentSnapshot = await FirebaseFirestore.instance
-                          .collection('orders')
-                          .doc('orders')
-                          .get();
-                  List<dynamic> orders = documentSnapshot.data()!['orders'];
-                  orders.forEach((order) {
-                    if (order['name'] == name) {
-                      order['status'] = 'rejected';
+                  final CollectionReference ordersCollection =
+                      FirebaseFirestore.instance.collection('orders');
+                  await ordersCollection
+                      .where('email', isEqualTo: email)
+                      .where('status', isEqualTo: 'pending')
+                      .limit(1)
+                      .get()
+                      .then((querySnapshot) {
+                    if (querySnapshot.docs.isNotEmpty) {
+                      String docId = querySnapshot.docs[0].id;
+                      ordersCollection.doc(docId).update({
+                        'status': 'delrejected',
+                      });
                     }
                   });
-                  await FirebaseFirestore.instance
-                      .collection('orders')
-                      .doc('orders')
-                      .update({'orders': orders});
                 } catch (e) {
                   Fluttertoast.showToast(
                       msg: 'Something went wrong, please try again',

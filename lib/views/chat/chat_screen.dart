@@ -42,20 +42,20 @@ class _ChatScreenState extends State<ChatScreen> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? name = prefs.getString('name');
       type = prefs.getString('type')!;
-      final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+      String searchCategory = type == 'client' ? 'name' : 'deliveryName';
+      final QuerySnapshot<Map<String, dynamic>> querySnapshot =
           await FirebaseFirestore.instance
               .collection('orders')
-              .doc('orders')
+              .where('status', whereIn:['accepted','pending'])
+              .where(searchCategory, isEqualTo: name)
+              .limit(1)
               .get();
 
-      Map<String, dynamic> mp = {};
-      List<dynamic> orders = documentSnapshot.data()!['orders'];
-      for (var order in orders) {
-        if (order['name'] == name || order['deliveryName'] == name) {
-          mp = order;
-          break;
-        }
-      }
+      final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+          querySnapshot.docs.first;
+
+      // Store the info inside the document in the mp map
+      final Map<String, dynamic> mp = documentSnapshot.data()!;
 
       receiverName = type == 'delivery' ? mp['name'] : mp['deliveryName'];
       isReferral = mp['isReferral'];
@@ -250,21 +250,20 @@ class _ChatScreenState extends State<ChatScreen> {
                           .instance
                           .collection('chats')
                           .doc(chatRoomId);
-                      DocumentReference ordersDoc = FirebaseFirestore.instance
-                          .collection('orders')
-                          .doc('orders');
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      String? deliveryEmail = prefs.getString('deliveryEmail');
+                      final QuerySnapshot<Map<String, dynamic>> querySnapshot =
+                          await FirebaseFirestore.instance
+                              .collection('orders')
+                              .where('status', isEqualTo: 'accepted')
+                              .where('deliveryEmail', isEqualTo: deliveryEmail)
+                              .limit(1)
+                              .get();
+                      final DocumentReference orderDoc =
+                          querySnapshot.docs.first.reference;
+                      await orderDoc.update({'status': 'cancelled'});
 
-                      ordersDoc.get().then((docSnapshot) async {
-                        List<dynamic> orderList = docSnapshot.get('orders');
-                        for (int i = 0; i < orderList.length; i++) {
-                          Map<dynamic, dynamic> orderMap = orderList[i];
-                          if (orderMap['name'] == receiverName ||
-                              orderMap['deliveryName' == receiverName]) {
-                            orderList.remove(orderMap);
-                            ordersDoc.update({'orders': orderList});
-                          }
-                        }
-                      });
                       await docRef.update({'cancel': true});
                     } catch (e) {
                       Fluttertoast.showToast(
