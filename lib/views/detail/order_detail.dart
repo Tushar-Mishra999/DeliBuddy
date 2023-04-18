@@ -58,7 +58,6 @@ class _OrderDetailState extends State<OrderDetail> {
                 msg: "Order not delivered yet",
                 backgroundColor: color2,
                 textColor: Colors.white);
-            
           }
       }
 

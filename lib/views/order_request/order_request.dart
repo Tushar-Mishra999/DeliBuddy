@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delibuddy/constants.dart';
 import 'package:delibuddy/notifications.dart';
 import 'package:delibuddy/views/order_request/request_card.dart';
+import 'package:delibuddy/views/settings/setting_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -29,9 +30,9 @@ class _OrderRequestState extends State<OrderRequest>
   void initState() {
     super.initState();
     orderStream = FirebaseFirestore.instance
-    .collection('orders')
-    .where('status', isEqualTo: 'pending')
-    .snapshots();
+        .collection('orders')
+        .where('status', isEqualTo: 'pending')
+        .snapshots();
     helloWorld();
     _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
       deleteOldOrders();
@@ -112,7 +113,9 @@ class _OrderRequestState extends State<OrderRequest>
         final int orderTimestamp = timestamp.seconds;
 
         if (currentTimestamp > orderTimestamp + 120) {
-          await ordersCollection.doc(orderDoc.id).update({'status': 'notfound'});
+          await ordersCollection
+              .doc(orderDoc.id)
+              .update({'status': 'notfound'});
         }
       }
     } catch (e) {
@@ -131,7 +134,8 @@ class _OrderRequestState extends State<OrderRequest>
       stream: orderStream,
       builder: (context, snapshot) {
         if (snapshot.data != null) {
-          List<DocumentSnapshot> orderList = snapshot.data!.docs;;
+          List<DocumentSnapshot> orderList = snapshot.data!.docs;
+          ;
           return orderList.isEmpty
               ? Center(
                   child: Text(
@@ -150,7 +154,8 @@ class _OrderRequestState extends State<OrderRequest>
                     itemCount: orderList.length,
                     itemBuilder: (context, index) {
                       Map<String, dynamic> details =
-                        orderList[index].data() as Map<String, dynamic>;;
+                          orderList[index].data() as Map<String, dynamic>;
+                      ;
                       return details['status'] == 'pending'
                           ? RequestCard(
                               size: size,
@@ -197,6 +202,21 @@ class _OrderRequestState extends State<OrderRequest>
                         Icons.person_outlined,
                         size: 35,
                       ),
+                    ),
+                    SizedBox(
+                      width: size.width * 0.05,
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        Navigator.pushNamed(context, SettingScreen.routeName);
+                      },
+                      child: const Icon(
+                        Icons.settings,
+                        size: 35,
+                      ),
+                    ),
+                    SizedBox(
+                      width: size.width * 0.02,
                     ),
                   ],
                 ),

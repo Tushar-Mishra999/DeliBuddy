@@ -9,6 +9,7 @@ import 'package:delibuddy/views/onboarding_screen.dart';
 import 'package:delibuddy/views/order/order_place.dart';
 import 'package:delibuddy/views/order_request/order_request.dart';
 import 'package:delibuddy/views/profile/profile_screen.dart';
+import 'package:delibuddy/views/settings/setting_screen.dart';
 import 'package:flutter/material.dart';
 
 Route<dynamic> generateRoute(RouteSettings routeSettings) {
@@ -66,6 +67,12 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
       return MaterialPageRoute(
         settings: routeSettings,
         builder: (_) => const ChatScreen(
+            ),
+      );
+    case SettingScreen.routeName:
+      return MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) => const SettingScreen(
             ),
       );
     case OrderDetail.routeName:
