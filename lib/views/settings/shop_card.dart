@@ -21,60 +21,50 @@ class ShopCard extends StatefulWidget {
 class _ShopCardState extends State<ShopCard> {
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        if (!widget.status) {
-          return;
-        }
-        Navigator.pushNamed(context, OrderDescription.routeName, arguments: {
-          'shopName': widget.name,
-        });
-      },
-      child: Container(
-        margin: const EdgeInsets.all(15),
-        padding: const EdgeInsets.only(left: 12, right: 12),
-        width: widget.size.width * 0.8,
-        height: widget.size.height * 0.08,
-        decoration: BoxDecoration(
-            color: color2, borderRadius: BorderRadius.circular(10)),
-        child: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                widget.name,
-                style: GoogleFonts.sourceSansPro(
-                    fontSize: 20, color: bgcolor, fontWeight: FontWeight.w800),
-              ),
-              Switch.adaptive(
-                  activeColor: Colors.green,
-                  inactiveTrackColor: Colors.red,
-                  value: widget.status,
-                  onChanged: (val) async {
-                    final collectionRef =
-                        FirebaseFirestore.instance.collection('stores');
-                    final documentSnapshot =
-                        await collectionRef.doc('stores').get();
-                    final storesArray = List<Map<String, dynamic>>.from(
-                        documentSnapshot.data()!['stores']);
+    return Container(
+      margin: const EdgeInsets.all(15),
+      padding: const EdgeInsets.only(left: 12, right: 12),
+      width: widget.size.width * 0.8,
+      height: widget.size.height * 0.08,
+      decoration:
+          BoxDecoration(color: color2, borderRadius: BorderRadius.circular(10)),
+      child: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              widget.name,
+              style: GoogleFonts.sourceSansPro(
+                  fontSize: 20, color: bgcolor, fontWeight: FontWeight.w800),
+            ),
+            Switch.adaptive(
+                activeColor: Colors.green,
+                inactiveTrackColor: Colors.red,
+                value: widget.status,
+                onChanged: (val) async {
+                  final collectionRef =
+                      FirebaseFirestore.instance.collection('stores');
+                  final documentSnapshot =
+                      await collectionRef.doc('stores').get();
+                  final storesArray = List<Map<String, dynamic>>.from(
+                      documentSnapshot.data()!['stores']);
 
-                    final index = storesArray
-                        .indexWhere((store) => store['name'] == widget.name);
-                    if (index >= 0) {
-                      widget.status = !storesArray[index]['status'];
-                      final updatedStore = {
-                        'name': widget.name,
-                        'status': !storesArray[index]['status'],
-                      };
-                      storesArray[index] = updatedStore;
-                      await collectionRef
-                          .doc('stores')
-                          .update({'stores': storesArray});
-                      setState(() {});
-                    }
-                  }),
-            ],
-          ),
+                  final index = storesArray
+                      .indexWhere((store) => store['name'] == widget.name);
+                  if (index >= 0) {
+                    widget.status = !storesArray[index]['status'];
+                    final updatedStore = {
+                      'name': widget.name,
+                      'status': !storesArray[index]['status'],
+                    };
+                    storesArray[index] = updatedStore;
+                    await collectionRef
+                        .doc('stores')
+                        .update({'stores': storesArray});
+                    setState(() {});
+                  }
+                }),
+          ],
         ),
       ),
     );

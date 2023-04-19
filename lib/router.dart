@@ -1,3 +1,4 @@
+import 'package:delibuddy/version_update.dart';
 import 'package:delibuddy/views/order/referral_screen.dart';
 import 'package:delibuddy/views/auth/email_verification.dart';
 import 'package:delibuddy/views/chat/chat_screen.dart';
@@ -61,6 +62,12 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
         settings: routeSettings,
         builder: (_) => OrderDescription(
           shopName: arguments['shopName'],
+        ),
+      );
+    case VersionUpdate.routeName:
+      return MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) => VersionUpdate(
         ),
       );
     case ChatScreen.routeName:

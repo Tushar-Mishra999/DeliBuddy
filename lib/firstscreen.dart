@@ -1,16 +1,14 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delibuddy/constants.dart';
-import 'package:delibuddy/views/order/order_place.dart';
+import 'package:delibuddy/version_update.dart';
 import 'package:delibuddy/views/chat/chat_screen.dart';
 import 'package:delibuddy/views/home/home_screen.dart';
 import 'package:delibuddy/views/onboarding_screen.dart';
 import 'package:delibuddy/views/order_request/order_request.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FirstScreen extends StatefulWidget {
@@ -22,6 +20,7 @@ class FirstScreen extends StatefulWidget {
 
 class _FirstScreenState extends State<FirstScreen> {
   Timer? _timer;
+  bool first = false;
   @override
   void initState() {
     super.initState();
@@ -30,10 +29,22 @@ class _FirstScreenState extends State<FirstScreen> {
 
   void checkLoginStatus() async {
     try {
+      DocumentSnapshot<Map<String, dynamic>> versionSnapshot =
+          await FirebaseFirestore.instance
+              .collection('version')
+              .doc('version')
+              .get();
+      Map<String, dynamic>? versionMap = versionSnapshot.data();
+      String versionNumber = versionMap!['version'];
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      if (packageInfo.version != versionNumber) {
+        Navigator.popAndPushNamed(context, VersionUpdate.routeName);
+        return;
+      }
+      first = true;
       SharedPreferences prefs = await SharedPreferences.getInstance();
       bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
       bool isChat = false;
-      bool isOrder = false;
       String type = prefs.getString('type') ?? 'client';
       String name = prefs.getString('name') ?? '';
       String searchCategory = type == 'client' ? 'name' : 'deliveryName';
@@ -77,7 +88,9 @@ class _FirstScreenState extends State<FirstScreen> {
 
   @override
   void dispose() {
-    _timer!.cancel(); // cancel the timer to avoid memory leaks
+    if (first) {
+      _timer!.cancel();
+    } // cancel the timer to avoid memory leaks
     super.dispose();
   }
 
